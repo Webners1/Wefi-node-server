@@ -6,4 +6,4 @@ const traderSchema = new mongoose.Schema({
   vault_address: { type: String, required: true },
 });
 
-export const Traders = mongoose.model('Traders', traderSchema);
+export const Trader = mongoose.model('Trader', traderSchema);
