@@ -13,7 +13,7 @@ const confirmationThreshold = 3;
 
 let transactionHash;
 
-const getEvents = async () => {
+export const getEvents = async () => {
   const ws = new WebSocket(infuraWsUrl);
 
 
@@ -98,5 +98,5 @@ const getTransaction = async (transactionHash) => {
   console.log(`Transaction details: ${JSON.stringify(transaction)}`);
 };
 
-getEvents();
+// getEvents();
 
