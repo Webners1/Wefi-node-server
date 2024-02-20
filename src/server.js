@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import fetchTokenInfo from './monitor.cjs';
+import { Trader } from './models/Trader.js';
 
 /**
  * Init express
