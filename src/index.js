@@ -1,21 +1,31 @@
-const express = require('express');
-const app = express();
-const fetchTokenInfo = require('./monitor.cjs'); // Import the function from the logic file
+import './LoadEnv.js'; // Must be the first import
+import app from './server.js';
+import mongoConnection from './config/db.js';
+import { createServer } from 'http';
+import { webSocketConnection } from './config/socketConnection.js';
 
-// Define a route that triggers the fetchTokenInfo function
-app.post('/wait', async (req, res) => {
-    const tokenInfo = fetchTokenInfo(req.body); // Call the logic function with the webhook data
-    try {
-        console.log(tokenInfo);
-        // Process the wallet data here (e.g., save to a database, send notifications, etc.)
-    } catch (e) {
-        console.log(e);
-        return res.status(400).json();
-    }
-    return res.status(200).json();
+/**
+ * Port at which server will run
+ */
+const port = Number(process.env.PORT || 5000);
+const httpServer = createServer(app);
+const sio = webSocketConnection(httpServer);
+
+/**
+ * Connecting to Database
+ */
+await mongoConnection();
+
+/**
+ * Starting the server
+ * @param port Port at which server will run
+ */
+const server = httpServer.listen(port, () => {
+  console.log(`Server Running on Port: http://localhost:${port}`);
 });
 
-const port = 3000; // Choose a port for your Express app (you can change it to your desired port)
-app.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
-});
+/**
+ * Exporting server instance
+ */
+export { sio };
+export default server;

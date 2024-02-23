@@ -1,11 +1,11 @@
 const express = require('express');
 const app = express();
-const fetchTokenInfo = require('./monitor.cjs'); // Import the function from the logic file
+const getEvents = require('./monitor.cjs'); // Import the function from the logic file
 
 // Define a route that triggers the fetchTokenInfo function
 app.post('/', async (req, res) => {
   console.log("this")
-   fetchTokenInfo(res); // Call the logic function to fetch token info
+  getEvents(res); // Call the logic function to fetch token info
     const {body} = req; // Send the token info as a JSON response
     try {
         console.log(body);
