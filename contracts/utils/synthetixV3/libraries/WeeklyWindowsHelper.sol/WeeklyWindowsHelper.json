@@ -1,0 +1,168 @@
+{
+  "_format": "hh-sol-artifact-1",
+  "contractName": "WeeklyWindowsHelper",
+  "sourceName": "contracts/utils/synthetixV3/libraries/WeeklyWindowsHelper.sol",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "components": [
+            {
+              "components": [
+                {
+                  "internalType": "uint8",
+                  "name": "dayOfWeek",
+                  "type": "uint8"
+                },
+                {
+                  "internalType": "uint8",
+                  "name": "hour",
+                  "type": "uint8"
+                }
+              ],
+              "internalType": "struct SynthetixV3Structs.TimePeriod",
+              "name": "start",
+              "type": "tuple"
+            },
+            {
+              "components": [
+                {
+                  "internalType": "uint8",
+                  "name": "dayOfWeek",
+                  "type": "uint8"
+                },
+                {
+                  "internalType": "uint8",
+                  "name": "hour",
+                  "type": "uint8"
+                }
+              ],
+              "internalType": "struct SynthetixV3Structs.TimePeriod",
+              "name": "end",
+              "type": "tuple"
+            }
+          ],
+          "internalType": "struct SynthetixV3Structs.Window",
+          "name": "_window",
+          "type": "tuple"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_timestamp",
+          "type": "uint256"
+        }
+      ],
+      "name": "isWithinAllowedWindow",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "pure",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "components": [
+            {
+              "components": [
+                {
+                  "components": [
+                    {
+                      "internalType": "uint8",
+                      "name": "dayOfWeek",
+                      "type": "uint8"
+                    },
+                    {
+                      "internalType": "uint8",
+                      "name": "hour",
+                      "type": "uint8"
+                    }
+                  ],
+                  "internalType": "struct SynthetixV3Structs.TimePeriod",
+                  "name": "start",
+                  "type": "tuple"
+                },
+                {
+                  "components": [
+                    {
+                      "internalType": "uint8",
+                      "name": "dayOfWeek",
+                      "type": "uint8"
+                    },
+                    {
+                      "internalType": "uint8",
+                      "name": "hour",
+                      "type": "uint8"
+                    }
+                  ],
+                  "internalType": "struct SynthetixV3Structs.TimePeriod",
+                  "name": "end",
+                  "type": "tuple"
+                }
+              ],
+              "internalType": "struct SynthetixV3Structs.Window",
+              "name": "delegationWindow",
+              "type": "tuple"
+            },
+            {
+              "components": [
+                {
+                  "components": [
+                    {
+                      "internalType": "uint8",
+                      "name": "dayOfWeek",
+                      "type": "uint8"
+                    },
+                    {
+                      "internalType": "uint8",
+                      "name": "hour",
+                      "type": "uint8"
+                    }
+                  ],
+                  "internalType": "struct SynthetixV3Structs.TimePeriod",
+                  "name": "start",
+                  "type": "tuple"
+                },
+                {
+                  "components": [
+                    {
+                      "internalType": "uint8",
+                      "name": "dayOfWeek",
+                      "type": "uint8"
+                    },
+                    {
+                      "internalType": "uint8",
+                      "name": "hour",
+                      "type": "uint8"
+                    }
+                  ],
+                  "internalType": "struct SynthetixV3Structs.TimePeriod",
+                  "name": "end",
+                  "type": "tuple"
+                }
+              ],
+              "internalType": "struct SynthetixV3Structs.Window",
+              "name": "undelegationWindow",
+              "type": "tuple"
+            }
+          ],
+          "internalType": "struct SynthetixV3Structs.WeeklyWindows",
+          "name": "_windows",
+          "type": "tuple"
+        }
+      ],
+      "name": "validateWindows",
+      "outputs": [],
+      "stateMutability": "pure",
+      "type": "function"
+    }
+  ],
+  "bytecode": "0x61041b610026600b82828239805160001a60731461001957fe5b30600052607381538281f3fe73000000000000000000000000000000000000000030146080604052600436106100405760003560e01c80637479e04c146100455780638056fa341461006e575b600080fd5b61005861005336600461038a565b610083565b60405161006591906103da565b60405180910390f35b61008161007c366004610334565b61016a565b005b60008061008f83610185565b9050600061009c84610198565b90506100ab60208601866103b9565b60ff168210806100cc57506100c660608601604087016103b9565b60ff1682115b156100dc57600092505050610164565b6100e960208601866103b9565b60ff168214801561010b575061010560408601602087016103b9565b60ff1681105b1561011b57600092505050610164565b61012b60608601604087016103b9565b60ff168214801561014d575061014760808601606087016103b9565b60ff1681115b1561015d57600092505050610164565b6001925050505b92915050565b8051610175906101a6565b61018281602001516101a6565b50565b6007620151809091046003010660010190565b610e10620151809091060490565b80516101b1906101ba565b61018281602001515b80516101c89060ff166101d8565b610182816020015160ff16610235565b60008160ff161180156101ee575060088160ff16105b610182576040805162461bcd60e51b8152602060048201526013602482015272696e76616c696420646179206f66207765656b60681b604482015290519081900360640190fd5b60188160ff1610610182576040805162461bcd60e51b815260206004820152600c60248201526b34b73b30b634b2103437bab960a11b604482015290519081900360640190fd5b60006040828403121561028d578081fd5b604051604081018181106001600160401b03821117156102a957fe5b6040529050806102b88361031e565b81526102c66020840161031e565b60208201525092915050565b6000608082840312156102e3578081fd5b604051604081018181106001600160401b03821117156102ff57fe5b60405290508061030f848461027c565b81526102c6846040850161027c565b803560ff8116811461032f57600080fd5b919050565b60006101008284031215610346578081fd5b604051604081018181106001600160401b038211171561036257fe5b60405261036f84846102d2565b815261037e84608085016102d2565b60208201529392505050565b60008082840360a081121561039d578182fd5b60808112156103aa578182fd5b50919360808501359350915050565b6000602082840312156103ca578081fd5b6103d38261031e565b9392505050565b90151581526020019056fea2646970667358221220bdfb7cf0f9f4050557416ca09d6e7f20eb89b80ba84bdc1efb635665827ccf7c64736f6c63430007060033",
+  "deployedBytecode": "0x73000000000000000000000000000000000000000030146080604052600436106100405760003560e01c80637479e04c146100455780638056fa341461006e575b600080fd5b61005861005336600461038a565b610083565b60405161006591906103da565b60405180910390f35b61008161007c366004610334565b61016a565b005b60008061008f83610185565b9050600061009c84610198565b90506100ab60208601866103b9565b60ff168210806100cc57506100c660608601604087016103b9565b60ff1682115b156100dc57600092505050610164565b6100e960208601866103b9565b60ff168214801561010b575061010560408601602087016103b9565b60ff1681105b1561011b57600092505050610164565b61012b60608601604087016103b9565b60ff168214801561014d575061014760808601606087016103b9565b60ff1681115b1561015d57600092505050610164565b6001925050505b92915050565b8051610175906101a6565b61018281602001516101a6565b50565b6007620151809091046003010660010190565b610e10620151809091060490565b80516101b1906101ba565b61018281602001515b80516101c89060ff166101d8565b610182816020015160ff16610235565b60008160ff161180156101ee575060088160ff16105b610182576040805162461bcd60e51b8152602060048201526013602482015272696e76616c696420646179206f66207765656b60681b604482015290519081900360640190fd5b60188160ff1610610182576040805162461bcd60e51b815260206004820152600c60248201526b34b73b30b634b2103437bab960a11b604482015290519081900360640190fd5b60006040828403121561028d578081fd5b604051604081018181106001600160401b03821117156102a957fe5b6040529050806102b88361031e565b81526102c66020840161031e565b60208201525092915050565b6000608082840312156102e3578081fd5b604051604081018181106001600160401b03821117156102ff57fe5b60405290508061030f848461027c565b81526102c6846040850161027c565b803560ff8116811461032f57600080fd5b919050565b60006101008284031215610346578081fd5b604051604081018181106001600160401b038211171561036257fe5b60405261036f84846102d2565b815261037e84608085016102d2565b60208201529392505050565b60008082840360a081121561039d578182fd5b60808112156103aa578182fd5b50919360808501359350915050565b6000602082840312156103ca578081fd5b6103d38261031e565b9392505050565b90151581526020019056fea2646970667358221220bdfb7cf0f9f4050557416ca09d6e7f20eb89b80ba84bdc1efb635665827ccf7c64736f6c63430007060033",
+  "linkReferences": {},
+  "deployedLinkReferences": {}
+}

@@ -1,0 +1,119 @@
+{
+  "_format": "hh-sol-artifact-1",
+  "contractName": "ClosedContractGuard",
+  "sourceName": "contracts/guards/contractGuards/ClosedContractGuard.sol",
+  "abi": [
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "fundAddress",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "sourceAsset",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "sourceAmount",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "dstAsset",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "time",
+          "type": "uint256"
+        }
+      ],
+      "name": "ExchangeFrom",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "fundAddress",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "sourceAsset",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "dstAsset",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "dstAmount",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "time",
+          "type": "uint256"
+        }
+      ],
+      "name": "ExchangeTo",
+      "type": "event"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        },
+        {
+          "internalType": "bytes",
+          "name": "",
+          "type": "bytes"
+        }
+      ],
+      "name": "txGuard",
+      "outputs": [
+        {
+          "internalType": "uint16",
+          "name": "",
+          "type": "uint16"
+        },
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "pure",
+      "type": "function"
+    }
+  ],
+  "bytecode": "0x608060405234801561001057600080fd5b5061010e806100206000396000f3fe6080604052348015600f57600080fd5b506004361060285760003560e01c80636179309d14602d575b600080fd5b60ae60048036036060811015604157600080fd5b6001600160a01b038235811692602081013590911691810190606081016040820135600160201b811115607357600080fd5b820183602082011115608457600080fd5b803590602001918460018302840111600160201b8311171560a457600080fd5b50909250905060cc565b6040805161ffff909316835290151560208301528051918290030190f35b6000809450949250505056fea26469706673582212200c73929e5d319dc3e65d8a9e364824146f83f0eefe00dd1f32f7450f208d777364736f6c63430007060033",
+  "deployedBytecode": "0x6080604052348015600f57600080fd5b506004361060285760003560e01c80636179309d14602d575b600080fd5b60ae60048036036060811015604157600080fd5b6001600160a01b038235811692602081013590911691810190606081016040820135600160201b811115607357600080fd5b820183602082011115608457600080fd5b803590602001918460018302840111600160201b8311171560a457600080fd5b50909250905060cc565b6040805161ffff909316835290151560208301528051918290030190f35b6000809450949250505056fea26469706673582212200c73929e5d319dc3e65d8a9e364824146f83f0eefe00dd1f32f7450f208d777364736f6c63430007060033",
+  "linkReferences": {},
+  "deployedLinkReferences": {}
+}

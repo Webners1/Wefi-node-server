@@ -1,0 +1,297 @@
+{
+  "_format": "hh-sol-artifact-1",
+  "contractName": "WeeklyWindowsHelperTest",
+  "sourceName": "contracts/test/WeeklyWindowsHelperTest.sol",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "components": [
+            {
+              "components": [
+                {
+                  "internalType": "uint8",
+                  "name": "dayOfWeek",
+                  "type": "uint8"
+                },
+                {
+                  "internalType": "uint8",
+                  "name": "hour",
+                  "type": "uint8"
+                }
+              ],
+              "internalType": "struct SynthetixV3Structs.TimePeriod",
+              "name": "start",
+              "type": "tuple"
+            },
+            {
+              "components": [
+                {
+                  "internalType": "uint8",
+                  "name": "dayOfWeek",
+                  "type": "uint8"
+                },
+                {
+                  "internalType": "uint8",
+                  "name": "hour",
+                  "type": "uint8"
+                }
+              ],
+              "internalType": "struct SynthetixV3Structs.TimePeriod",
+              "name": "end",
+              "type": "tuple"
+            }
+          ],
+          "internalType": "struct SynthetixV3Structs.Window",
+          "name": "_window",
+          "type": "tuple"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_timestamp",
+          "type": "uint256"
+        }
+      ],
+      "name": "isWithinAllowedWindow",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "pure",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "year",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "month",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "day",
+          "type": "uint256"
+        }
+      ],
+      "name": "timestampFromDate",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "timestamp",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "pure",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "components": [
+            {
+              "internalType": "uint8",
+              "name": "dayOfWeek",
+              "type": "uint8"
+            },
+            {
+              "internalType": "uint8",
+              "name": "hour",
+              "type": "uint8"
+            }
+          ],
+          "internalType": "struct SynthetixV3Structs.TimePeriod",
+          "name": "_timePeriod",
+          "type": "tuple"
+        }
+      ],
+      "name": "validateTimePeriod",
+      "outputs": [],
+      "stateMutability": "pure",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "components": [
+            {
+              "components": [
+                {
+                  "internalType": "uint8",
+                  "name": "dayOfWeek",
+                  "type": "uint8"
+                },
+                {
+                  "internalType": "uint8",
+                  "name": "hour",
+                  "type": "uint8"
+                }
+              ],
+              "internalType": "struct SynthetixV3Structs.TimePeriod",
+              "name": "start",
+              "type": "tuple"
+            },
+            {
+              "components": [
+                {
+                  "internalType": "uint8",
+                  "name": "dayOfWeek",
+                  "type": "uint8"
+                },
+                {
+                  "internalType": "uint8",
+                  "name": "hour",
+                  "type": "uint8"
+                }
+              ],
+              "internalType": "struct SynthetixV3Structs.TimePeriod",
+              "name": "end",
+              "type": "tuple"
+            }
+          ],
+          "internalType": "struct SynthetixV3Structs.Window",
+          "name": "_window",
+          "type": "tuple"
+        }
+      ],
+      "name": "validateWindow",
+      "outputs": [],
+      "stateMutability": "pure",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "components": [
+            {
+              "components": [
+                {
+                  "components": [
+                    {
+                      "internalType": "uint8",
+                      "name": "dayOfWeek",
+                      "type": "uint8"
+                    },
+                    {
+                      "internalType": "uint8",
+                      "name": "hour",
+                      "type": "uint8"
+                    }
+                  ],
+                  "internalType": "struct SynthetixV3Structs.TimePeriod",
+                  "name": "start",
+                  "type": "tuple"
+                },
+                {
+                  "components": [
+                    {
+                      "internalType": "uint8",
+                      "name": "dayOfWeek",
+                      "type": "uint8"
+                    },
+                    {
+                      "internalType": "uint8",
+                      "name": "hour",
+                      "type": "uint8"
+                    }
+                  ],
+                  "internalType": "struct SynthetixV3Structs.TimePeriod",
+                  "name": "end",
+                  "type": "tuple"
+                }
+              ],
+              "internalType": "struct SynthetixV3Structs.Window",
+              "name": "delegationWindow",
+              "type": "tuple"
+            },
+            {
+              "components": [
+                {
+                  "components": [
+                    {
+                      "internalType": "uint8",
+                      "name": "dayOfWeek",
+                      "type": "uint8"
+                    },
+                    {
+                      "internalType": "uint8",
+                      "name": "hour",
+                      "type": "uint8"
+                    }
+                  ],
+                  "internalType": "struct SynthetixV3Structs.TimePeriod",
+                  "name": "start",
+                  "type": "tuple"
+                },
+                {
+                  "components": [
+                    {
+                      "internalType": "uint8",
+                      "name": "dayOfWeek",
+                      "type": "uint8"
+                    },
+                    {
+                      "internalType": "uint8",
+                      "name": "hour",
+                      "type": "uint8"
+                    }
+                  ],
+                  "internalType": "struct SynthetixV3Structs.TimePeriod",
+                  "name": "end",
+                  "type": "tuple"
+                }
+              ],
+              "internalType": "struct SynthetixV3Structs.Window",
+              "name": "undelegationWindow",
+              "type": "tuple"
+            }
+          ],
+          "internalType": "struct SynthetixV3Structs.WeeklyWindows",
+          "name": "_windows",
+          "type": "tuple"
+        }
+      ],
+      "name": "validateWindows",
+      "outputs": [],
+      "stateMutability": "pure",
+      "type": "function"
+    }
+  ],
+  "bytecode": "0x608060405234801561001057600080fd5b50610672806100206000396000f3fe608060405234801561001057600080fd5b50600436106100575760003560e01c80631f4f77b21461005c5780634006867414610085578063742a993c146100a557806388b2e9dd146100ba578063d81ea094146100cd575b600080fd5b61006f61006a366004610548565b6100e0565b60405161007c9190610633565b60405180910390f35b6100986100933660046104fe565b6100f5565b60405161007c91906105d0565b6100b86100b33660046104a8565b610188565b005b6100b86100c836600461048d565b6101f2565b6100b86100db36600461052d565b6101fe565b60006100ed848484610207565b949350505050565b604051631d1e781360e21b815260009073__$b19aed48fcbbd98cd8d3f5f09896e3459a$__90637479e04c906101319086908690600401610608565b60206040518083038186803b15801561014957600080fd5b505af415801561015d573d6000803e3d6000fd5b505050506040513d601f19601f82011682018060405250810190610181919061046d565b9392505050565b604051632015be8d60e21b815273__$b19aed48fcbbd98cd8d3f5f09896e3459a$__90638056fa34906101bf9084906004016105db565b60006040518083038186803b1580156101d757600080fd5b505af41580156101eb573d6000803e3d6000fd5b5050505050565b6101fb81610221565b50565b6101fb8161023f565b600062015180610218858585610257565b02949350505050565b805161022f9060ff16610311565b6101fb816020015160ff1661036e565b805161024a90610221565b6101fb8160200151610221565b60006107b28410156102a6576040805162461bcd60e51b81526020600482015260136024820152723139373020616e64206c61746572206f6e6c7960681b604482015290519081900360640190fd5b838383600062253d8c600460036064611324600c600d19890105890101050205600c80600d19870105600c02600287030361016f02816102e257fe5b0560046105b5600c600d1989010589016112c0010205617d4b8603010103039050809450505050509392505050565b60008160ff16118015610327575060088160ff16105b6101fb576040805162461bcd60e51b8152602060048201526013602482015272696e76616c696420646179206f66207765656b60681b604482015290519081900360640190fd5b60188160ff16106101fb576040805162461bcd60e51b815260206004820152600c60248201526b34b73b30b634b2103437bab960a11b604482015290519081900360640190fd5b6000604082840312156103c6578081fd5b604051604081018181106001600160401b03821117156103e257fe5b6040529050806103f183610457565b81526103ff60208401610457565b60208201525092915050565b60006080828403121561041c578081fd5b604051604081018181106001600160401b038211171561043857fe5b60405290508061044884846103b5565b81526103ff84604085016103b5565b803560ff8116811461046857600080fd5b919050565b60006020828403121561047e578081fd5b81518015158114610181578182fd5b60006040828403121561049e578081fd5b61018183836103b5565b600061010082840312156104ba578081fd5b604051604081018181106001600160401b03821117156104d657fe5b6040526104e3848461040b565b81526104f2846080850161040b565b60208201529392505050565b60008082840360a0811215610511578182fd5b608081121561051e578182fd5b50919360808501359350915050565b60006080828403121561053e578081fd5b610181838361040b565b60008060006060848603121561055c578081fd5b505081359360208301359350604090920135919050565b60ff61057e82610457565b16825260ff61058f60208301610457565b1660208301525050565b805160ff908116835260209182015116910152565b6105b9828251610599565b60208101516105cb6040840182610599565b505050565b901515815260200190565b6000610100820190506105ef8284516105ae565b602083015161060160808401826105ae565b5092915050565b60a081016106168285610573565b6106266040830160408601610573565b8260808301529392505050565b9081526020019056fea264697066735822122047200eb9f5650b5427f2088501808e74fc31d17c9bb613750c6667787a61438b64736f6c63430007060033",
+  "deployedBytecode": "0x608060405234801561001057600080fd5b50600436106100575760003560e01c80631f4f77b21461005c5780634006867414610085578063742a993c146100a557806388b2e9dd146100ba578063d81ea094146100cd575b600080fd5b61006f61006a366004610548565b6100e0565b60405161007c9190610633565b60405180910390f35b6100986100933660046104fe565b6100f5565b60405161007c91906105d0565b6100b86100b33660046104a8565b610188565b005b6100b86100c836600461048d565b6101f2565b6100b86100db36600461052d565b6101fe565b60006100ed848484610207565b949350505050565b604051631d1e781360e21b815260009073__$b19aed48fcbbd98cd8d3f5f09896e3459a$__90637479e04c906101319086908690600401610608565b60206040518083038186803b15801561014957600080fd5b505af415801561015d573d6000803e3d6000fd5b505050506040513d601f19601f82011682018060405250810190610181919061046d565b9392505050565b604051632015be8d60e21b815273__$b19aed48fcbbd98cd8d3f5f09896e3459a$__90638056fa34906101bf9084906004016105db565b60006040518083038186803b1580156101d757600080fd5b505af41580156101eb573d6000803e3d6000fd5b5050505050565b6101fb81610221565b50565b6101fb8161023f565b600062015180610218858585610257565b02949350505050565b805161022f9060ff16610311565b6101fb816020015160ff1661036e565b805161024a90610221565b6101fb8160200151610221565b60006107b28410156102a6576040805162461bcd60e51b81526020600482015260136024820152723139373020616e64206c61746572206f6e6c7960681b604482015290519081900360640190fd5b838383600062253d8c600460036064611324600c600d19890105890101050205600c80600d19870105600c02600287030361016f02816102e257fe5b0560046105b5600c600d1989010589016112c0010205617d4b8603010103039050809450505050509392505050565b60008160ff16118015610327575060088160ff16105b6101fb576040805162461bcd60e51b8152602060048201526013602482015272696e76616c696420646179206f66207765656b60681b604482015290519081900360640190fd5b60188160ff16106101fb576040805162461bcd60e51b815260206004820152600c60248201526b34b73b30b634b2103437bab960a11b604482015290519081900360640190fd5b6000604082840312156103c6578081fd5b604051604081018181106001600160401b03821117156103e257fe5b6040529050806103f183610457565b81526103ff60208401610457565b60208201525092915050565b60006080828403121561041c578081fd5b604051604081018181106001600160401b038211171561043857fe5b60405290508061044884846103b5565b81526103ff84604085016103b5565b803560ff8116811461046857600080fd5b919050565b60006020828403121561047e578081fd5b81518015158114610181578182fd5b60006040828403121561049e578081fd5b61018183836103b5565b600061010082840312156104ba578081fd5b604051604081018181106001600160401b03821117156104d657fe5b6040526104e3848461040b565b81526104f2846080850161040b565b60208201529392505050565b60008082840360a0811215610511578182fd5b608081121561051e578182fd5b50919360808501359350915050565b60006080828403121561053e578081fd5b610181838361040b565b60008060006060848603121561055c578081fd5b505081359360208301359350604090920135919050565b60ff61057e82610457565b16825260ff61058f60208301610457565b1660208301525050565b805160ff908116835260209182015116910152565b6105b9828251610599565b60208101516105cb6040840182610599565b505050565b901515815260200190565b6000610100820190506105ef8284516105ae565b602083015161060160808401826105ae565b5092915050565b60a081016106168285610573565b6106266040830160408601610573565b8260808301529392505050565b9081526020019056fea264697066735822122047200eb9f5650b5427f2088501808e74fc31d17c9bb613750c6667787a61438b64736f6c63430007060033",
+  "linkReferences": {
+    "contracts/utils/synthetixV3/libraries/WeeklyWindowsHelper.sol": {
+      "WeeklyWindowsHelper": [
+        {
+          "length": 20,
+          "start": 295
+        },
+        {
+          "length": 20,
+          "start": 439
+        }
+      ]
+    }
+  },
+  "deployedLinkReferences": {
+    "contracts/utils/synthetixV3/libraries/WeeklyWindowsHelper.sol": {
+      "WeeklyWindowsHelper": [
+        {
+          "length": 20,
+          "start": 263
+        },
+        {
+          "length": 20,
+          "start": 407
+        }
+      ]
+    }
+  }
+}

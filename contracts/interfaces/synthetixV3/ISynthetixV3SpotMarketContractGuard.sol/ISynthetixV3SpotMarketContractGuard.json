@@ -1,0 +1,47 @@
+{
+  "_format": "hh-sol-artifact-1",
+  "contractName": "ISynthetixV3SpotMarketContractGuard",
+  "sourceName": "contracts/interfaces/synthetixV3/ISynthetixV3SpotMarketContractGuard.sol",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_synthAddress",
+          "type": "address"
+        }
+      ],
+      "name": "allowedMarkets",
+      "outputs": [
+        {
+          "components": [
+            {
+              "internalType": "uint128",
+              "name": "marketId",
+              "type": "uint128"
+            },
+            {
+              "internalType": "address",
+              "name": "collateralSynth",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "collateralAsset",
+              "type": "address"
+            }
+          ],
+          "internalType": "struct SynthetixV3Structs.AllowedMarket",
+          "name": "allowedMarket",
+          "type": "tuple"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ],
+  "bytecode": "0x",
+  "deployedBytecode": "0x",
+  "linkReferences": {},
+  "deployedLinkReferences": {}
+}

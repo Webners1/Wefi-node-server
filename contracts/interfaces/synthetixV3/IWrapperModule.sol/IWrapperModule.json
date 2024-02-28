@@ -1,0 +1,123 @@
+{
+  "_format": "hh-sol-artifact-1",
+  "contractName": "IWrapperModule",
+  "sourceName": "contracts/interfaces/synthetixV3/IWrapperModule.sol",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "uint128",
+          "name": "marketId",
+          "type": "uint128"
+        },
+        {
+          "internalType": "uint256",
+          "name": "unwrapAmount",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "minAmountReceived",
+          "type": "uint256"
+        }
+      ],
+      "name": "unwrap",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "returnCollateralAmount",
+          "type": "uint256"
+        },
+        {
+          "components": [
+            {
+              "internalType": "uint256",
+              "name": "fixedFees",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "utilizationFees",
+              "type": "uint256"
+            },
+            {
+              "internalType": "int256",
+              "name": "skewFees",
+              "type": "int256"
+            },
+            {
+              "internalType": "int256",
+              "name": "wrapperFees",
+              "type": "int256"
+            }
+          ],
+          "internalType": "struct IWrapperModule.OrderFees",
+          "name": "fees",
+          "type": "tuple"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint128",
+          "name": "marketId",
+          "type": "uint128"
+        },
+        {
+          "internalType": "uint256",
+          "name": "wrapAmount",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "minAmountReceived",
+          "type": "uint256"
+        }
+      ],
+      "name": "wrap",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "amountToMint",
+          "type": "uint256"
+        },
+        {
+          "components": [
+            {
+              "internalType": "uint256",
+              "name": "fixedFees",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "utilizationFees",
+              "type": "uint256"
+            },
+            {
+              "internalType": "int256",
+              "name": "skewFees",
+              "type": "int256"
+            },
+            {
+              "internalType": "int256",
+              "name": "wrapperFees",
+              "type": "int256"
+            }
+          ],
+          "internalType": "struct IWrapperModule.OrderFees",
+          "name": "fees",
+          "type": "tuple"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ],
+  "bytecode": "0x",
+  "deployedBytecode": "0x",
+  "linkReferences": {},
+  "deployedLinkReferences": {}
+}

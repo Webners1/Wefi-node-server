@@ -1,0 +1,65 @@
+{
+  "_format": "hh-sol-artifact-1",
+  "contractName": "ILyraQuoter",
+  "sourceName": "contracts/interfaces/lyra/ILyraQuoter.sol",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "contract IOptionMarket",
+          "name": "_optionMarket",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "strikeId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "iterations",
+          "type": "uint256"
+        },
+        {
+          "internalType": "enum IOptionMarket.OptionType",
+          "name": "optionType",
+          "type": "uint8"
+        },
+        {
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
+        },
+        {
+          "internalType": "enum IOptionMarket.TradeDirection",
+          "name": "tradeDirection",
+          "type": "uint8"
+        },
+        {
+          "internalType": "bool",
+          "name": "isForceClose",
+          "type": "bool"
+        }
+      ],
+      "name": "quote",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "totalPremium",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "totalFee",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ],
+  "bytecode": "0x",
+  "deployedBytecode": "0x",
+  "linkReferences": {},
+  "deployedLinkReferences": {}
+}

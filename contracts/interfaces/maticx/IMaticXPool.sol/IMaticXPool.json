@@ -1,0 +1,49 @@
+{
+  "_format": "hh-sol-artifact-1",
+  "contractName": "IMaticXPool",
+  "sourceName": "contracts/interfaces/maticx/IMaticXPool.sol",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "maticBalance",
+          "type": "uint256"
+        }
+      ],
+      "name": "convertMaticToMaticX",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "maticXBalance",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "maticXBalance",
+          "type": "uint256"
+        }
+      ],
+      "name": "convertMaticXToMatic",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "maticBalance",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ],
+  "bytecode": "0x",
+  "deployedBytecode": "0x",
+  "linkReferences": {},
+  "deployedLinkReferences": {}
+}
