@@ -44,11 +44,12 @@ let transactionHash;
 
 const getEvents = async (txHash) => {
   
-  // const result = await getTransactionDetails(txHash);
-  const result = await getTransactionDetails(txHash.transaction.hash);
-  execTransaction(result)
+  const {isUniversal,isV2,result} = await getTransactionDetails(txHash);
+  console.log(isUniversal,isV2,result)
+  // const result = await getTransactionDetails(txHash.transaction.hash);
+  execTransaction(isUniversal,isV2,result)
 
 };
 
-// getEvents("0xa72955977af89ac8d29f6912ce6062ab68f2605ea020d15657d8a1cccadc8564")
+getEvents("0x1fbb688948b2b762838ccae8a04a11c03d0f7cef859901d1d495e917b86f4c1c")
 

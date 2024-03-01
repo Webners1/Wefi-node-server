@@ -1,11 +1,11 @@
-import { ethers } from 'ethers'
+const { ethers } = require('ethers')
 
 /**
  * CommandTypes
  * @description Flags that modify a command's execution
  * @enum {number}
  */
-export const CommandType = {
+const CommandType = {
   V3_SWAP_EXACT_IN: 0x00,
   V3_SWAP_EXACT_OUT: 0x01,
   PERMIT2_TRANSFER_FROM: 0x02,
@@ -114,7 +114,7 @@ const ABI_DEFINITION= {
   [CommandType.ELEMENT_MARKET]: ['uint256', 'bytes'],
 }
 
-export class RoutePlanner {
+class RoutePlanner {
   commands
   inputs
 
@@ -143,7 +143,8 @@ export class RoutePlanner {
 
 
 
-export function createCommand(type, parameters) {
+function createCommand(type, parameters) {
   const encodedInput = ethers.utils.defaultAbiCoder.encode(ABI_DEFINITION[type], parameters)
   return { type, encodedInput }
 }
+module.exports = {createCommand,CommandType,RoutePlanner}

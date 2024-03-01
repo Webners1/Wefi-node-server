@@ -1,3 +1,5 @@
+const { CommandType, RoutePlanner } =require('./commandType.cjs');
+
 const { Web3 } = require('web3');
 const ethers = require('ethers');
 const {
@@ -14,6 +16,7 @@ const {
 } = require('../contracts/PoolFactory.sol/PoolFactory.json'); // Replace with your contract's ABI
 const UniswapRouterV3_ABI = require('./uniswapV3.json'); // Replace with your contract's ABI
 const UniswapRouterV2_ABI = require('./uniswapV2.json'); // Replace with your contract's ABI
+const Universal_ABI = require('./UniversalRouter.json'); // Replace with your contract's ABI
 const {
   abi: WETH_ABI,
 } = require('../contracts/interfaces/IWETH.sol/IWETH.json'); // Replace with your contract's ABI
@@ -42,14 +45,40 @@ const V2Logic = new web3.eth.Contract(
   V2Router,
 );
 let swapABI;
-let isUniversal;
+let isUniversal=true;
 let isV2;
+let name;
 
 // Set your account address and private key
 const accountAddress = '0x7a491dA575A00b14A88DC4B9914E0c2323A1eFd3'; // Replace with your account's address
 const privateKey =
   '0xa204996d053cf1e9abb3bd6001158a91e736c3fce1ab278765f676fce0c07f23'; // Replace with your account's private key
-function deconstructTransactionDescription(txDescription) {
+
+
+  function functionNameToNumericCommandType(functionName) {
+    // Remove the leading "V3_" from the function name
+
+  
+    // Convert the command type name to PascalCase
+    // const pascalCaseCommandType = functionName.replace(/_[a-z]/g, (match) => match.slice(1).toUpperCase());
+
+    // Get the numeric value of the command type
+    const numericCommandType = CommandType[functionName].valueOf();
+  
+    return '0x0' + numericCommandType.toString(16);;
+  }
+  function convertBigNumbersToNumbers(array) {
+    return array.map(item => {
+      if (item instanceof ethers.BigNumber) {
+        return (Number(item)).toString();
+      } else {
+        return item;
+      }
+    });
+  }
+
+
+  function deconstructTransactionDescription(txDescription) {
   let {
     args,
     functionFragment,
@@ -97,10 +126,7 @@ function deconstructTransactionDescription(txDescription) {
   value = ((value)?.toNumber()).toString()
   return {
     name,
-    isV2,
-    signature,
     inputs,
-    outputs,
     value,
   };
 }
@@ -137,16 +163,18 @@ function modifyAndConvertInput(input) {
 
   return inputArray;
 }
-async function execTransaction(data) {
-
-    let { name, isV2, inputs, value } =
-      deconstructTransactionDescription(data);
-    const to =
-      isV2 && !isUniversal
-        ? V2Router
-        : !isV2 && !isUniversal
-        ? V3Router
-        : UNIVERSALRouter;
+async function execTransaction(isUniversal,isV2, data) {
+console.log(isUniversal,data)
+ if(!isUniversal){ 
+    let { functionName, inputs, value } =
+      deconstructTransactionDescription(data)
+      name = functionName
+    // const to =
+    //   isV2 && !isUniversal
+    //     ? V2Router
+    //     : !isV2 && !isUniversal
+    //     ? V3Router
+    //     : UNIVERSALRouter;
 
     const necessaryKeys = Object.keys(inputs).filter(
       (key) => typeof key !== 'string',
@@ -176,24 +204,47 @@ async function execTransaction(data) {
           });
 
     inputArray = Object.values(InputObject);
-console.log(inputArray)
-    const iUniswapRouter = isV2
+    inputArray = convertBigNumbersToNumbers(inputArray)
+    console.log("input array",inputArray)}
+    else{
+      const { function:functionName,recipient, amountIn, path, payerIsUser } = data;
+      let planner = new RoutePlanner()
+      const numericCommandType = functionNameToNumericCommandType(functionName);
+      console.log(numericCommandType)
+      planner.addCommand(
+        CommandType.V3_SWAP_EXACT_IN,
+
+      )
+      const commands = [
+        {
+          type: CommandType.V3_SWAP_EXACT_IN,
+          args: [
+            PoolLogic,
+            amountIn.toString(), // amountInIsExact
+            0, // amountOutIsExact
+            path,
+            true,
+          ],
+        },
+      ];
+       name = "execute";
+    }
+    const iUniswapRouter = isV2 && !isUniversal
       ? new ethers.utils.Interface(UniswapRouterV2_ABI)
-      : new ethers.utils.Interface(UniswapRouterV3_ABI);
-    swapABI = iUniswapRouter.encodeFunctionData(name, inputArray);
-    // const txObject = PoolLogic.methods.execTransaction(to, swapABI);
-    const txObject =  V2Logic.methods.swapExactETHForTokens(inputArray[0],inputArray[1],inputArray[2],inputArray[3]);
+      :!isV2 && !isUniversal? new ethers.utils.Interface(UniswapRouterV3_ABI):new ethers.utils.Interface(Universal_ABI);
+    swapABI = iUniswapRouter.encodeFunctionData(name, [inputArray]);
+    const txObject = PoolLogic.methods.execTransaction(to, swapABI);
 
     
     const gasPrice = await web3.eth.getGasPrice();
-    // const gasEstimate = await txObject.estimateGas({
-    //   gasPrice
-    // });
+    const gasEstimate = await txObject.estimateGas({
+      gasPrice
+    });
     const txParams = {
       from: accountAddress,
-      to: V2Router,
+      to: PoolLogic_address,
       data: txObject.encodeABI(),
-      // gas: (Number(gasPrice)*150),
+      gas: gasEstimate,
       gasPrice: gasPrice,
       value: value
     };
