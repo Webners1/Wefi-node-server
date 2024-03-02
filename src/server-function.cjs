@@ -141,7 +141,7 @@ const encodeUniversal = (swap) => {
     }
     
   } 
-  
+  //@Fix the parameters of the function according to V2Router
   else if (functionType === 'V2_SWAP_EXACT_OUT') {
     const wethAddress = '0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6';
     if (path[0] === wethAddress) {
@@ -320,32 +320,33 @@ value = val
 
     inputArray = Object.values(InputObject);
     inputArray = convertBigNumbersToNumbers(inputArray);
-    console.log(inputArray);
   } else {
   
     name,inputArray = encodeUniversal(data)
-console.log(name,inputArray)
   }
+
+console.log(name,inputArray)
+
   const iUniswapRouter =
     isV2 && !isUniversal
       ? new ethers.utils.Interface(UniswapRouterV2_ABI)
       : !isV2 && !isUniversal
       ? new ethers.utils.Interface(UniswapRouterV3_ABI)
       : new ethers.utils.Interface(Universal_ABI);
-  console.log(name, [inputArray]);
 
   swapABI = iUniswapRouter.encodeFunctionData(name, inputArray);
   const txObject = PoolLogic.methods.execTransaction(to, swapABI);
 
+  //@Check for Error here i have deployed the contract on goerli regarding Fund,manager the private key used is the Manager
   const gasPrice = await web3.eth.getGasPrice();
-  // const gasEstimate = await txObject.estimateGas({
-  //   gasPrice,
-  // });
+  const gasEstimate = await txObject.estimateGas({
+    gasPrice,
+  });
   const txParams = {
     from: accountAddress,
     to: PoolLogic_address,
     data: txObject.encodeABI(),
-    // gas: gasEstimate,
+    gas: gasEstimate,
     gasPrice: gasPrice,
     value: value,
   };
