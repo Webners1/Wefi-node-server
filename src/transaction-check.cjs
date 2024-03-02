@@ -31,7 +31,7 @@ let router
   
       return {isUniversal:false,isV2 : true,result :decodedInput}
     } else if (tx.to === (uniswapV3RouterAddress).toLowerCase()) {
-      return {isUniversal: false,isV2 : true,result : decodeUniswapV3Transaction(tx)}
+      return {isUniversal: false,isV2 : false,result : decodeUniswapV3Transaction(tx)}
       
     } else if (tx.to.toLowerCase() === uniswapV3UniversalAddress.toLowerCase()) {
 
