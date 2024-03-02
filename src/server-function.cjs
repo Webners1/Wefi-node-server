@@ -184,7 +184,7 @@ console.log(isUniversal,data)
       : inputs[0];
 
     const InputObject =
-      isV2 && !isUniversal
+      isV2
         ? Object.assign({}, ...necessaryValues, {
             amountOutMin: '0',
             path: inputs['1'],
@@ -194,15 +194,11 @@ console.log(isUniversal,data)
               60 * 3
             ).toString(),
           })
-        : !isV2 && !isUniversal
-        ? necessaryValues.filter(
+        : 
+        necessaryValues.filter(
             (item) => typeof item !== 'object' || item._isBigNumber,
           )
-        : Object.assign({}, inputs, {
-            command: '',
-            input: '',
-          });
-
+       
     inputArray = Object.values(InputObject);
     inputArray = convertBigNumbersToNumbers(inputArray)
     console.log("input array",inputArray)}
