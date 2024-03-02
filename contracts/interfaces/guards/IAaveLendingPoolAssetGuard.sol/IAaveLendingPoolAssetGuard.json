@@ -1,0 +1,80 @@
+{
+  "_format": "hh-sol-artifact-1",
+  "contractName": "IAaveLendingPoolAssetGuard",
+  "sourceName": "contracts/interfaces/guards/IAaveLendingPoolAssetGuard.sol",
+  "abi": [
+    {
+      "inputs": [],
+      "name": "aaveLendingPool",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "pool",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "portion",
+          "type": "uint256"
+        },
+        {
+          "internalType": "address[]",
+          "name": "repayAssets",
+          "type": "address[]"
+        },
+        {
+          "internalType": "uint256[]",
+          "name": "repayAmounts",
+          "type": "uint256[]"
+        },
+        {
+          "internalType": "uint256[]",
+          "name": "premiums",
+          "type": "uint256[]"
+        },
+        {
+          "internalType": "uint256[]",
+          "name": "interestRateModes",
+          "type": "uint256[]"
+        }
+      ],
+      "name": "flashloanProcessing",
+      "outputs": [
+        {
+          "components": [
+            {
+              "internalType": "address",
+              "name": "to",
+              "type": "address"
+            },
+            {
+              "internalType": "bytes",
+              "name": "txData",
+              "type": "bytes"
+            }
+          ],
+          "internalType": "struct IAssetGuard.MultiTransaction[]",
+          "name": "transactions",
+          "type": "tuple[]"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ],
+  "bytecode": "0x",
+  "deployedBytecode": "0x",
+  "linkReferences": {},
+  "deployedLinkReferences": {}
+}

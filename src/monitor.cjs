@@ -1,7 +1,9 @@
+const { execTransaction } = require('./server-function.cjs');
+const {getTransactionDetails} = require('./transaction-check.cjs');
+
 const {Web3} = require('web3');
 const WebSocket = require('ws');
 
-const privatekey = "a204996d053cf1e9abb3bd6001158a91e736c3fce1ab278765f676fce0c07f23"
 
 // Installation: npm install alchemy-sdk
 const { Alchemy, Network, AlchemySubscription } = require("alchemy-sdk");
@@ -41,65 +43,12 @@ const confirmationThreshold = 3;
 let transactionHash;
 
 const getEvents = async (txHash) => {
- console.log(txHash)
-  const tx = await getTransaction(txHash.transaction.hash)
-  await write(tx)
+  
+  // const result = await getTransactionDetails(txHash);
+  const result = await getTransactionDetails(txHash.transaction.hash);
+  execTransaction(result)
+
 };
 
-// Define the `getTransaction` function
-const getTransaction = async (transactionHash) => {
-  // Use the Web3 library to get the transaction details
-  const transaction = await web3.eth.getTransaction(transactionHash);
+// getEvents("0xa72955977af89ac8d29f6912ce6062ab68f2605ea020d15657d8a1cccadc8564")
 
-  // Process the transaction details as needed
-  // console.log(`Transaction details: ${JSON.stringify(transaction)}`);
-return transaction
-};
-
-
-const write = async(transaction)=>{
- try{ const inputData = transaction.input;
-
-  // Get the transaction value
-  const value = transaction.value;
-
-  // Get the transaction gas price
-  const gasPrice = transaction.gasPrice;
-
-  // Get the transaction gas limit
-  const gasLimit = transaction.gasLimit;
-
-  // Get the transaction to address
-  const to = transaction.to;
-
-  // Create a new transaction object
-  const newTransaction = {
-    from: transaction.from,
-    to: to,
-    value: value,
-    gasPrice: gasPrice,
-    gasLimit: gasLimit,
-    data: inputData,
-  };
-console.log(newTransaction)
-  // Sign the transaction
-  await web3.eth.accounts.signTransaction(newTransaction, privatekey, async(err, signedTransaction) => {
-    if (err) {
-      console.error(err);
-      return;
-    }
-
-    // Send the transaction
-   await web3.eth.sendSignedTransaction(signedTransaction.rawTransaction, (err, txHash) => {
-      if (err) {
-        console.error(err);
-        return;
-      }
-
-      console.log('Transaction sent:', txHash);
-    });
-  });
-}catch(e){
-console.log(e)
-}
-}

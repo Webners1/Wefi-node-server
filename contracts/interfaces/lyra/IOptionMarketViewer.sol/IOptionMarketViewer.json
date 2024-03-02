@@ -1,0 +1,211 @@
+{
+  "_format": "hh-sol-artifact-1",
+  "contractName": "IOptionMarketViewer",
+  "sourceName": "contracts/interfaces/lyra/IOptionMarketViewer.sol",
+  "abi": [
+    {
+      "inputs": [],
+      "name": "getMarketAddresses",
+      "outputs": [
+        {
+          "components": [
+            {
+              "internalType": "address",
+              "name": "liquidityPool",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "liquidityTokens",
+              "type": "address"
+            },
+            {
+              "internalType": "contract IOptionGreekCache",
+              "name": "greekCache",
+              "type": "address"
+            },
+            {
+              "internalType": "contract IOptionMarket",
+              "name": "optionMarket",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "optionMarketPricer",
+              "type": "address"
+            },
+            {
+              "internalType": "contract IOptionToken",
+              "name": "optionToken",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "shortCollateral",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "poolHedger",
+              "type": "address"
+            },
+            {
+              "internalType": "contract IERC20",
+              "name": "quoteAsset",
+              "type": "address"
+            },
+            {
+              "internalType": "contract IERC20",
+              "name": "baseAsset",
+              "type": "address"
+            }
+          ],
+          "internalType": "struct IOptionMarketViewer.OptionMarketAddresses[]",
+          "name": "",
+          "type": "tuple[]"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "owner",
+          "type": "address"
+        }
+      ],
+      "name": "getOwnerPositions",
+      "outputs": [
+        {
+          "components": [
+            {
+              "internalType": "uint256",
+              "name": "positionId",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "strikeId",
+              "type": "uint256"
+            },
+            {
+              "internalType": "enum IOptionMarket.OptionType",
+              "name": "optionType",
+              "type": "uint8"
+            },
+            {
+              "internalType": "uint256",
+              "name": "amount",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "collateral",
+              "type": "uint256"
+            },
+            {
+              "internalType": "enum IOptionToken.PositionState",
+              "name": "state",
+              "type": "uint8"
+            }
+          ],
+          "internalType": "struct IOptionToken.OptionPosition[]",
+          "name": "",
+          "type": "tuple[]"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "market",
+          "type": "address"
+        }
+      ],
+      "name": "marketAddresses",
+      "outputs": [
+        {
+          "components": [
+            {
+              "internalType": "address",
+              "name": "liquidityPool",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "liquidityTokens",
+              "type": "address"
+            },
+            {
+              "internalType": "contract IOptionGreekCache",
+              "name": "greekCache",
+              "type": "address"
+            },
+            {
+              "internalType": "contract IOptionMarket",
+              "name": "optionMarket",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "optionMarketPricer",
+              "type": "address"
+            },
+            {
+              "internalType": "contract IOptionToken",
+              "name": "optionToken",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "shortCollateral",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "poolHedger",
+              "type": "address"
+            },
+            {
+              "internalType": "contract IERC20",
+              "name": "quoteAsset",
+              "type": "address"
+            },
+            {
+              "internalType": "contract IERC20",
+              "name": "baseAsset",
+              "type": "address"
+            }
+          ],
+          "internalType": "struct IOptionMarketViewer.OptionMarketAddresses",
+          "name": "",
+          "type": "tuple"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "synthetixAdapter",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ],
+  "bytecode": "0x",
+  "deployedBytecode": "0x",
+  "linkReferences": {},
+  "deployedLinkReferences": {}
+}

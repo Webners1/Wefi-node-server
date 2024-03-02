@@ -1,0 +1,50 @@
+{
+  "_format": "hh-sol-artifact-1",
+  "contractName": "DateTime",
+  "sourceName": "contracts/utils/DateTime.sol",
+  "abi": [
+    {
+      "inputs": [],
+      "name": "OFFSET19700101",
+      "outputs": [
+        {
+          "internalType": "int256",
+          "name": "",
+          "type": "int256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "SECONDS_PER_DAY",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "SECONDS_PER_HOUR",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ],
+  "bytecode": "0x60ba610025600b82828239805160001a60731461001857fe5b30600052607381538281f3fe730000000000000000000000000000000000000000301460806040526004361060475760003560e01c80634df8612614604c57806374f0314f146064578063a3f144ae14606a575b600080fd5b60526070565b60408051918252519081900360200190f35b60526076565b6052607d565b610e1081565b6201518081565b62253d8c8156fea2646970667358221220c4122c7f9926e0026c5213a817dbf00c822c2708d03b66a03b35efe323026e7e64736f6c63430007060033",
+  "deployedBytecode": "0x730000000000000000000000000000000000000000301460806040526004361060475760003560e01c80634df8612614604c57806374f0314f146064578063a3f144ae14606a575b600080fd5b60526070565b60408051918252519081900360200190f35b60526076565b6052607d565b610e1081565b6201518081565b62253d8c8156fea2646970667358221220c4122c7f9926e0026c5213a817dbf00c822c2708d03b66a03b35efe323026e7e64736f6c63430007060033",
+  "linkReferences": {},
+  "deployedLinkReferences": {}
+}

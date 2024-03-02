@@ -1,0 +1,123 @@
+{
+  "_format": "hh-sol-artifact-1",
+  "contractName": "ICollateralConfigurationModule",
+  "sourceName": "contracts/interfaces/synthetixV3/ICollateralConfigurationModule.sol",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "collateralType",
+          "type": "address"
+        }
+      ],
+      "name": "getCollateralConfiguration",
+      "outputs": [
+        {
+          "components": [
+            {
+              "internalType": "bool",
+              "name": "depositingEnabled",
+              "type": "bool"
+            },
+            {
+              "internalType": "uint256",
+              "name": "issuanceRatioD18",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "liquidationRatioD18",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "liquidationRewardD18",
+              "type": "uint256"
+            },
+            {
+              "internalType": "bytes32",
+              "name": "oracleNodeId",
+              "type": "bytes32"
+            },
+            {
+              "internalType": "address",
+              "name": "tokenAddress",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "minDelegationD18",
+              "type": "uint256"
+            }
+          ],
+          "internalType": "struct ICollateralConfigurationModule.CollateralConfiguration",
+          "name": "collateral",
+          "type": "tuple"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bool",
+          "name": "hideDisabled",
+          "type": "bool"
+        }
+      ],
+      "name": "getCollateralConfigurations",
+      "outputs": [
+        {
+          "components": [
+            {
+              "internalType": "bool",
+              "name": "depositingEnabled",
+              "type": "bool"
+            },
+            {
+              "internalType": "uint256",
+              "name": "issuanceRatioD18",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "liquidationRatioD18",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "liquidationRewardD18",
+              "type": "uint256"
+            },
+            {
+              "internalType": "bytes32",
+              "name": "oracleNodeId",
+              "type": "bytes32"
+            },
+            {
+              "internalType": "address",
+              "name": "tokenAddress",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "minDelegationD18",
+              "type": "uint256"
+            }
+          ],
+          "internalType": "struct ICollateralConfigurationModule.CollateralConfiguration[]",
+          "name": "collaterals",
+          "type": "tuple[]"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ],
+  "bytecode": "0x",
+  "deployedBytecode": "0x",
+  "linkReferences": {},
+  "deployedLinkReferences": {}
+}

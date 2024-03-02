@@ -1,0 +1,125 @@
+{
+  "_format": "hh-sol-artifact-1",
+  "contractName": "ILyraRegistry",
+  "sourceName": "contracts/interfaces/lyra/ILyraRegistry.sol",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "contractName",
+          "type": "bytes32"
+        }
+      ],
+      "name": "getGlobalAddress",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "globalContract",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "market",
+          "type": "address"
+        }
+      ],
+      "name": "getMarketAddresses",
+      "outputs": [
+        {
+          "components": [
+            {
+              "internalType": "address",
+              "name": "liquidityPool",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "liquidityToken",
+              "type": "address"
+            },
+            {
+              "internalType": "contract IOptionGreekCache",
+              "name": "greekCache",
+              "type": "address"
+            },
+            {
+              "internalType": "contract IOptionMarket",
+              "name": "optionMarket",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "optionMarketPricer",
+              "type": "address"
+            },
+            {
+              "internalType": "contract IOptionToken",
+              "name": "optionToken",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "poolHedger",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "shortCollateral",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "gwavOracle",
+              "type": "address"
+            },
+            {
+              "internalType": "contract IERC20",
+              "name": "quoteAsset",
+              "type": "address"
+            },
+            {
+              "internalType": "contract IERC20",
+              "name": "baseAsset",
+              "type": "address"
+            }
+          ],
+          "internalType": "struct ILyraRegistry.OptionMarketAddresses",
+          "name": "",
+          "type": "tuple"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "index",
+          "type": "uint256"
+        }
+      ],
+      "name": "optionMarkets",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ],
+  "bytecode": "0x",
+  "deployedBytecode": "0x",
+  "linkReferences": {},
+  "deployedLinkReferences": {}
+}
