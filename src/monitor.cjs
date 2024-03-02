@@ -51,5 +51,5 @@ const getEvents = async (txHash) => {
 
 };
 
-getEvents("0x53d584704096fc12c6cf0e8e4ce26357b5d02fa78eb0d022d69c125a43863166")
+getEvents("0x2af58be4388a5d0b69c4edeb148d1b0cd099d289c2df0e5569a672de0b067c79")
 
