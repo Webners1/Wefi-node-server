@@ -29,15 +29,15 @@ let router
        router =new ethers.utils.Interface(UniswapV2RouterABI);
        decodedInput = router.parseTransaction({ data: tx.data, value: tx.value});
   
-      return decodedInput
+      return {isUniversal:false,isV2 : true,result :decodedInput}
     } else if (tx.to === (uniswapV3RouterAddress).toLowerCase()) {
-      return decodeUniswapV3Transaction(tx);
+      return {isUniversal: false,isV2 : true,result : decodeUniswapV3Transaction(tx)}
       
     } else if (tx.to.toLowerCase() === uniswapV3UniversalAddress.toLowerCase()) {
 
       router =new ethers.utils.Interface(UniversalRouterABI);
 decodedInput =  decodeExecute(tx.data)
-     return decodedInput
+     return {isUniversal: true, isV2 :false,result :decodedInput}
     } else {
       console.log('Not a Uniswap transaction');
     }
@@ -47,8 +47,6 @@ decodedInput =  decodeExecute(tx.data)
 }
 
 function decodeUniswapV3Transaction(tx) {
-  const inputData = tx.input;
-  const methodId = inputData.slice(0, 10);
   const routers =new ethers.utils.Interface(UniswapV3RouterABI);
   const decodedInput = routers.parseTransaction({ data: tx.data, value: tx.value});
 
