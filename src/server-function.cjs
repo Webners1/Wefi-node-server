@@ -66,7 +66,7 @@ function functionNameToNumericCommandType(functionName) {
 }
 
 const encodeUniversal = (swap) => {
-  const { function:functionType, path } = swap;
+  const { function: functionType, path } = swap;
 
   if (functionType === 'V3_SWAP_EXACT_IN') {
     return {
@@ -83,8 +83,8 @@ const encodeUniversal = (swap) => {
         swap.sqrtPriceLimitX96 || "0"
       ]
     };
-  } 
-  else if(functionType === 'V3_SWAP_EXACT_OUT'){
+  }
+  else if (functionType === 'V3_SWAP_EXACT_OUT') {
     return {
       name: "exactOutputSingle",
       inputArray: [
@@ -110,7 +110,7 @@ const encodeUniversal = (swap) => {
           [path[1], path[0]],
           PoolLogic_address,
           Math.floor(Date.now() / 1000) +
-              60 * 3
+          60 * 3
         ]
       };
     } else if (path[1] === wethAddress) {
@@ -126,7 +126,7 @@ const encodeUniversal = (swap) => {
         ]
       };
     }
-    else{
+    else {
       return {
         name: "swapExactTokensForTokens",
         inputArray: [
@@ -139,8 +139,8 @@ const encodeUniversal = (swap) => {
         ]
       };
     }
-    
-  } 
+
+  }
   //@Fix the parameters of the function according to V2Router
   else if (functionType === 'V2_SWAP_EXACT_OUT') {
     const wethAddress = '0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6';
@@ -148,11 +148,11 @@ const encodeUniversal = (swap) => {
       return {
         name: "swapETHForExactTokens",
         inputArray: [
-          swap.amountOut,
+          '0',
           [path[1], path[0]],
           PoolLogic_address,
           Math.floor(Date.now() / 1000) +
-              60 * 3
+          60 * 3
         ]
       };
     } else if (path[1] === wethAddress) {
@@ -168,7 +168,7 @@ const encodeUniversal = (swap) => {
         ]
       };
     }
-    else{
+    else {
       return {
         name: "swapTokensForExactTokens",
         inputArray: [
@@ -181,7 +181,7 @@ const encodeUniversal = (swap) => {
         ]
       };
     }
-    
+
   }
   else {
     throw new Error('Invalid function type');
@@ -288,8 +288,8 @@ async function execTransaction(isUniversal, isV2, data) {
     isV2 && !isUniversal
       ? V2Router
       : !isV2 && !isUniversal
-      ? V3Router
-      : UNIVERSALRouter;
+        ? V3Router
+        : UNIVERSALRouter;
 
   if (!isUniversal) {
     let {
@@ -298,7 +298,7 @@ async function execTransaction(isUniversal, isV2, data) {
       value: val,
     } = deconstructTransactionDescription(data);
     name = functionName;
-value = val
+    value = val
     const necessaryKeys = Object.keys(inputs).filter(
       (key) => typeof key !== 'string',
     );
@@ -307,33 +307,33 @@ value = val
       : inputs[0];
     const InputObject = isV2
       ? Object.assign({}, ...necessaryValues, {
-          amountOutMin: '0',
-          path: inputs['1'],
-          to: accountAddress,
-          deadline: (
-            Math.floor(Date.now() / 1000) +
-            60 * 3
-          ).toString(),
-        })
+        amountOutMin: '0',
+        path: inputs['1'],
+        to: accountAddress,
+        deadline: (
+          Math.floor(Date.now() / 1000) +
+          60 * 3
+        ).toString(),
+      })
       : necessaryValues.filter(
-          (item) => typeof item !== 'object' || item._isBigNumber,
-        );
+        (item) => typeof item !== 'object' || item._isBigNumber,
+      );
 
     inputArray = Object.values(InputObject);
     inputArray = convertBigNumbersToNumbers(inputArray);
   } else {
-  
-    name,inputArray = encodeUniversal(data)
+
+    var { name, inputArray } = encodeUniversal(data)
   }
 
-console.log(name,inputArray)
+  console.log("nn", name, "inp", inputArray)
 
   const iUniswapRouter =
     isV2 && !isUniversal
       ? new ethers.utils.Interface(UniswapRouterV2_ABI)
       : !isV2 && !isUniversal
-      ? new ethers.utils.Interface(UniswapRouterV3_ABI)
-      : new ethers.utils.Interface(Universal_ABI);
+        ? new ethers.utils.Interface(UniswapRouterV3_ABI)
+        : new ethers.utils.Interface(Universal_ABI);
 
   swapABI = iUniswapRouter.encodeFunctionData(name, inputArray);
   const txObject = PoolLogic.methods.execTransaction(to, swapABI);
