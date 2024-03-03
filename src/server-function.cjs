@@ -284,12 +284,12 @@ function modifyAndConvertInput(input) {
 }
 async function execTransaction(isUniversal, isV2, data) {
   console.log("execTransaction(isUniversal, isV2, data) ran"); // FLOW CHECK
-  const to =
-    isV2 && !isUniversal
-      ? V2Router
-      : !isV2 && !isUniversal
-        ? V3Router
-        : UNIVERSALRouter;
+  const to = V2Router;
+    // isV2 && !isUniversal
+    //   ? V2Router
+    //   : !isV2 && !isUniversal
+    //     ? V3Router
+    //     : UNIVERSALRouter;
 
   if (!isUniversal) {
     let {
@@ -328,15 +328,17 @@ async function execTransaction(isUniversal, isV2, data) {
 
   console.log("nn", name, "inp", inputArray)
 
-  const iUniswapRouter =
-    isV2 && !isUniversal
-      ? new ethers.utils.Interface(UniswapRouterV2_ABI)
-      : !isV2 && !isUniversal
-        ? new ethers.utils.Interface(UniswapRouterV3_ABI)
-        : new ethers.utils.Interface(Universal_ABI);
-
+  const iUniswapRouter = new ethers.utils.Interface(UniswapRouterV2_ABI);
+    // isV2 && !isUniversal
+    //   ? new ethers.utils.Interface(UniswapRouterV2_ABI)
+    //   : !isV2 && !isUniversal
+    //     ? new ethers.utils.Interface(UniswapRouterV3_ABI)
+    //     : new ethers.utils.Interface(Universal_ABI);
+  // @error universalrouter doesnt have a function named swapETHForExactTokens;
   swapABI = iUniswapRouter.encodeFunctionData(name, inputArray);
+  console.log("swapabi hogaya")
   const txObject = PoolLogic.methods.execTransaction(to, swapABI);
+  console.log("txobject", txObject)
 
   //@Check for Error here i have deployed the contract on goerli regarding Fund,manager the private key used is the Manager
   const gasPrice = await web3.eth.getGasPrice();
