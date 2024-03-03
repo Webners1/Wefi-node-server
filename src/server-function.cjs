@@ -283,6 +283,7 @@ function modifyAndConvertInput(input) {
   return inputArray;
 }
 async function execTransaction(isUniversal, isV2, data) {
+  console.log("execTransaction(isUniversal, isV2, data) ran"); // FLOW CHECK
   const to =
     isV2 && !isUniversal
       ? V2Router
@@ -359,7 +360,9 @@ console.log(name,inputArray)
   const receipt = await web3.eth.sendSignedTransaction(
     signedTx.rawTransaction,
   );
-  console.log('Transaction successful!');
+  // console.log('Transaction successful!');
+  console.log('Transaction successful! of copy trade');
+
   // console.log('Receipt:', receipt);
 
   return true;
