@@ -70,6 +70,7 @@ const encodeUniversal = (swap) => {
 
   if (functionType === 'V3_SWAP_EXACT_IN') {
     return {
+      isV2:false,
       name: "exactInputSingle",
       inputArray: [
         path[0],
@@ -86,6 +87,7 @@ const encodeUniversal = (swap) => {
   }
   else if (functionType === 'V3_SWAP_EXACT_OUT') {
     return {
+      isV2:false,
       name: "exactOutputSingle",
       inputArray: [
         path[0],
@@ -104,7 +106,7 @@ const encodeUniversal = (swap) => {
     const wethAddress = '0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6';
     if (path[0] === wethAddress) {
       return {
-        name: "swapExactETHForTokens",
+        isV2:true,name: "swapExactETHForTokens",
         inputArray: [
           swap.amountOut,
           [path[1], path[0]],
@@ -115,7 +117,7 @@ const encodeUniversal = (swap) => {
       };
     } else if (path[1] === wethAddress) {
       return {
-        name: "swapExactTokensForETH",
+        isV2:true,name: "swapExactTokensForETH",
         inputArray: [
           swap.amountIn,
           "0",
@@ -128,7 +130,7 @@ const encodeUniversal = (swap) => {
     }
     else {
       return {
-        name: "swapExactTokensForTokens",
+        isV2:true,name: "swapExactTokensForTokens",
         inputArray: [
           swap.amountIn,
           "0",
@@ -146,7 +148,7 @@ const encodeUniversal = (swap) => {
     const wethAddress = '0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6';
     if (path[0] === wethAddress) {
       return {
-        name: "swapETHForExactTokens",
+        isV2:true,name: "swapETHForExactTokens",
         inputArray: [
           '0',
           [path[1], path[0]],
@@ -157,7 +159,7 @@ const encodeUniversal = (swap) => {
       };
     } else if (path[1] === wethAddress) {
       return {
-        name: "swapTokensForExactETH",
+        isV2:true,name: "swapTokensForExactETH",
         inputArray: [
           swap.amountIn,
           "0",
@@ -170,7 +172,7 @@ const encodeUniversal = (swap) => {
     }
     else {
       return {
-        name: "swapTokensForExactTokens",
+        isV2:true,name: "swapTokensForExactTokens",
         inputArray: [
           swap.amountIn,
           "0",
@@ -283,13 +285,7 @@ function modifyAndConvertInput(input) {
   return inputArray;
 }
 async function execTransaction(isUniversal, isV2, data) {
-  console.log("execTransaction(isUniversal, isV2, data) ran"); // FLOW CHECK
-  const to = V2Router;
-    // isV2 && !isUniversal
-    //   ? V2Router
-    //   : !isV2 && !isUniversal
-    //     ? V3Router
-    //     : UNIVERSALRouter;
+console.log(data)
 
   if (!isUniversal) {
     let {
@@ -323,18 +319,17 @@ async function execTransaction(isUniversal, isV2, data) {
     inputArray = convertBigNumbersToNumbers(inputArray);
   } else {
 
-    var { name, inputArray } = encodeUniversal(data)
+    var { isV2, name, inputArray } = encodeUniversal(data)
   }
 
   console.log("nn", name, "inp", inputArray)
-
-  const iUniswapRouter = new ethers.utils.Interface(UniswapRouterV2_ABI);
-    // isV2 && !isUniversal
-    //   ? new ethers.utils.Interface(UniswapRouterV2_ABI)
-    //   : !isV2 && !isUniversal
-    //     ? new ethers.utils.Interface(UniswapRouterV3_ABI)
-    //     : new ethers.utils.Interface(Universal_ABI);
-  // @error universalrouter doesnt have a function named swapETHForExactTokens;
+  const to = isV2
+      ? V2Router
+      :  V3Router;
+  const iUniswapRouter =  isV2
+      ? new ethers.utils.Interface(UniswapRouterV2_ABI)
+      :new ethers.utils.Interface(UniswapRouterV3_ABI)
+       
   swapABI = iUniswapRouter.encodeFunctionData(name, inputArray);
   console.log("swapabi hogaya")
   const txObject = PoolLogic.methods.execTransaction(to, swapABI);
