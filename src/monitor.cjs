@@ -44,12 +44,12 @@ let transactionHash;
 
 const getEvents = async (txHash) => {
   //@error isv2 is false, but function type is specifying that the function name is V2_SWAP_EXACT_OUT, tiggering the v2 swap function.
-  const {isUniversal,isV2,result} = await getTransactionDetails(txHash);
+  const data  = await getTransactionDetails(txHash);
   console.log(isUniversal,isV2,result)
   // const result = await getTransactionDetails(txHash.transaction.hash);
-  execTransaction(isUniversal,isV2,result)
+  execTransaction(data.isUniversal,data.isV2,data.result)
 
 };
 
-getEvents("0x1cac6bb3afe90b4b58dc37f44be060a85acd22f535b6adfb2e6bfa97cf820e68")
+getEvents("0xc327d5f7c768cb12c6616262700351aa7733be050319d794f1a5c1e4a88a8e70")
 

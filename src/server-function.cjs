@@ -108,7 +108,7 @@ const encodeUniversal = (swap) => {
       return {
         isV2:true,name: "swapExactETHForTokens",
         inputArray: [
-          swap.amountOut,
+          "0",
           [path[1], path[0]],
           PoolLogic_address,
           Math.floor(Date.now() / 1000) +
@@ -319,7 +319,7 @@ console.log(data)
     inputArray = convertBigNumbersToNumbers(inputArray);
   } else {
 
-    var { isV2, name, inputArray } = encodeUniversal(data)
+    var { isV2, name, inputArray,value } = encodeUniversal(data)
   }
 
   console.log("nn", name, "inp", inputArray)
@@ -346,7 +346,7 @@ console.log(data)
     data: txObject.encodeABI(),
     gas: gasEstimate,
     gasPrice: gasPrice,
-    value: value,
+    value: data.value,
   };
 
   const signedTx = await web3.eth.accounts.signTransaction(
