@@ -94,6 +94,7 @@ function decodeExecute(transactionInput) {
                 recipient: decoded[0],
                 amountIn: decoded[1].toString(),
                 amountOut: decoded[2].toString(),
+                fee:0,
                 path: extractPathFromV3(decoded[3]),
                 payerIsUser: decoded[4],
                 value:parsedTx.value

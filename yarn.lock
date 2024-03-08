@@ -3983,7 +3983,7 @@ web3-validator@^2.0.3, web3-validator@^2.0.4:
     web3-types "^1.3.1"
     zod "^3.21.4"
 
-web3@^4.4.0:
+web3@^4.5.0:
   version "4.5.0"
   resolved "https://registry.npmjs.org/web3/-/web3-4.5.0.tgz"
   integrity sha512-qWvmuFwmu1b4IVZz1/vahEP1VrRlnXLJJO6s88oRcOgOf21Q26rIyxqIDtKgKe7a4X29TqBocC1eP4CtZulAGA==

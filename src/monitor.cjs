@@ -41,15 +41,10 @@ const web3 = new Web3(infuraWsUrl);
 const getEvents = async (txHash) => {
   //@error isv2 is false, but function type is specifying that the function name is V2_SWAP_EXACT_OUT, tiggering the v2 swap function.
   const data  = await getTransactionDetails(txHash);
-  console.log(isUniversal,isV2,result)
   // const result = await getTransactionDetails(txHash.transaction.hash);
   execTransaction(data.isUniversal,data.isV2,data.result)
 
 };
 
-<<<<<<< HEAD
-getEvents("0x61e5e093e97d16260982885e6225380239a618b45bd080daacfa8a2bfbcb8563")
-=======
-getEvents("0xc327d5f7c768cb12c6616262700351aa7733be050319d794f1a5c1e4a88a8e70")
->>>>>>> 3074816dc970db0a3eac5740f6b91a313a36b936
+getEvents("0x1105a633d57d4d603b21aa7059cc36fa155e1364bc41726a267ebb4da7c9e9cb")
 
