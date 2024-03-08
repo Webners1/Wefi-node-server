@@ -110,7 +110,7 @@ async function isContractApproved(
   // Connect to Ethereum network using Web3 provider
 
   // Load the contract ABI for the token
-
+console.log("HDFHGH",tokenAddress)
   // Create a new instance of the token contract using the ABI and token address
   const tokenContract = new web3.eth.Contract(
     Token_ABI,
@@ -273,9 +273,9 @@ const encodeUniversal = (swap) => {
       inputArray: [
        [ path[0],
         path[1],
-        swap.fee || '10000',
+        swap.fee || '5000',
         PoolLogic_address,
-        Math.floor(Date.now() / 1000) + 60 * 3,
+        Math.floor(Date.now() / 1000) + 60 * 6,
         swap.amountIn,
         swap.amountOutMinimum || '0',
         swap.sqrtPriceLimitX96 || '0']
@@ -409,7 +409,6 @@ async function execTransaction(isUniversal, isV2, data) {
     const necessaryValues = isV2
       ? necessaryKeys.map((key) => inputs[key]) // Remove last 8 elements to get only the params array
       : inputs[0];
-    console.log('fff', isV2, necessaryValues);
     const InputObject = isV2
       ? Object.assign({}, ...necessaryValues, {
           amountOutMin: '0',
@@ -423,30 +422,37 @@ async function execTransaction(isUniversal, isV2, data) {
       : necessaryValues.filter(
           (item) => typeof item !== 'object' || item._isBigNumber,
         );
-    console.log('object', InputObject);
     inputArray = Object.values(InputObject);
     inputArray = convertBigNumbersToNumbers(inputArray);
   } else {
     var { isV2, name, inputArray, value } = encodeUniversal(data);
   }
-
+  console.log("inp, ",inputArray);
+  // inputArray = [inputArray]
   const to = isV2 ? V2Router : V3Router;
   const iUniswapRouter = isV2
     ? new ethers.utils.Interface(UniswapRouterV2_ABI)
     : new ethers.utils.Interface(UniswapRouterV3_ABI);
-console.log("inp",inputArray)
   swapABI = iUniswapRouter.encodeFunctionData(name, inputArray);
   const gasPrice = await web3.eth.getGasPrice();
 
 
-
   const approved =  await isContractApproved(
-    data.path[0],
+    data?.path?data.path[0]: data.args.params[0],
     to,
     PoolLogic_address,
-    data.amountIn,
+    data?.amountIn ? data?.amountIn:Number(data?.args.params.amountIn) ,
     gasPrice,
   )
+
+  // const approved =  await isContractApproved(
+  //   data?.path?data.path[0]: data.args.params[0],
+  //   to,
+  //   accountAddress,
+  //   data?.amountIn ? data?.amountIn:Number(data?.args.params.amountIn) ,
+  //   gasPrice,
+  // )
+  
   console.log(
     "approved",approved
   );
@@ -459,7 +465,7 @@ console.log("inp",inputArray)
   //   Math.floor(Date.now() / 1000) +
   //   60 * 300
   // ]);
-  console.log("swapAbi, ",swapABI);
+  
 
   const txObject = PoolLogic.methods.execTransaction(to, swapABI);
 
@@ -473,6 +479,13 @@ console.log("inp",inputArray)
     data: txObject.encodeABI(),
     gasPrice: gasPrice,
   };
+
+  // const txParams = {
+  //   from: accountAddress,
+  //   to: V2Router,
+  //   data: txObject.encodeABI(),
+  //   gasPrice: gasPrice,
+  // };
 
   const signedTx = await web3.eth.accounts.signTransaction(
     txParams,

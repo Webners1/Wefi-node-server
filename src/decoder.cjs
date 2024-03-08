@@ -94,10 +94,8 @@ function decodeExecute(transactionInput) {
                 recipient: decoded[0],
                 amountIn: decoded[1].toString(),
                 amountOut: decoded[2].toString(),
-                fee:0,
                 path: extractPathFromV3(decoded[3]),
                 payerIsUser: decoded[4],
-                value:parsedTx.value
             }
         case "V3_SWAP_EXACT_OUT": //exactOutputSingle FNC 9
             decoded = abiCoder.decode(["address", "uint256", "uint256", "bytes", "bool"], inputForFunction);
@@ -108,7 +106,6 @@ function decodeExecute(transactionInput) {
                 amountOut: decoded[1].toString(),
                 path: extractPathFromV3(decoded[3], true), // because exact output swaps are executed in reverse order, in this case tokenOut is actually tokenIn
                 payerIsUser: decoded[4],
-                value:parsedTx.value
 
             }
         case "V2_SWAP_EXACT_IN":
