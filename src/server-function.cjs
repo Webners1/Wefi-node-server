@@ -322,7 +322,7 @@ console.log("object",InputObject)
     inputArray = convertBigNumbersToNumbers(inputArray);
   } else {
 
-    var { isV2, name, inputArray } = encodeUniversal(data)
+    var { isV2, name, inputArray,value } = encodeUniversal(data)
   }
 
  console.log(name,inputArray)

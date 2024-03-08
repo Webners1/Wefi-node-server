@@ -6,7 +6,9 @@ const swapCodes = {
     "00": "V3_SWAP_EXACT_IN",
     "01": "V3_SWAP_EXACT_OUT",
     "08": "V2_SWAP_EXACT_IN",
-    "09": "V2_SWAP_EXACT_OUT"
+    "09": "V2_SWAP_EXACT_OUT",
+    "11": "WRAP_ETH",
+    "12":"UNWRAP_WETH"
 };
 
 const v2VersionDictionary = {
@@ -93,7 +95,8 @@ function decodeExecute(transactionInput) {
                 amountIn: decoded[1].toString(),
                 amountOut: decoded[2].toString(),
                 path: extractPathFromV3(decoded[3]),
-                payerIsUser: decoded[4]
+                payerIsUser: decoded[4],
+                value:parsedTx.value
             }
         case "V3_SWAP_EXACT_OUT": //exactOutputSingle FNC 9
             decoded = abiCoder.decode(["address", "uint256", "uint256", "bytes", "bool"], inputForFunction);
@@ -103,7 +106,9 @@ function decodeExecute(transactionInput) {
                 amountIn: decoded[2].toString(),
                 amountOut: decoded[1].toString(),
                 path: extractPathFromV3(decoded[3], true), // because exact output swaps are executed in reverse order, in this case tokenOut is actually tokenIn
-                payerIsUser: decoded[4]
+                payerIsUser: decoded[4],
+                value:parsedTx.value
+
             }
         case "V2_SWAP_EXACT_IN":
             decoded = abiCoder.decode(["address", "uint256", "uint256", "address[]", "bool"], inputForFunction);
@@ -113,7 +118,9 @@ function decodeExecute(transactionInput) {
                 amountIn: decoded[1].toString(),
                 amountOut: decoded[2].toString(),
                 path: decoded[3],
-                payerIsUser: decoded[4]
+                payerIsUser: decoded[4],
+                value:parsedTx.value
+
             }
         case "V2_SWAP_EXACT_OUT":
             decoded = abiCoder.decode(["address", "uint256", "uint256", "address[]", "bool"], inputForFunction);
@@ -123,7 +130,23 @@ function decodeExecute(transactionInput) {
                 amountIn: decoded[2].toString(),
                 amountOut: decoded[1].toString(),
                 path: decoded[3],
-                payerIsUser: decoded[4]
+                payerIsUser: decoded[4],
+                value:parsedTx.value
+
+            }
+        case "WRAP_ETH":
+            decoded = abiCoder.decode(["address", "uint256"], inputForFunction);
+            return {
+                function: swapCodes[foundFunction],
+                recipient: decoded[0],
+                amount: decoded[2].toString(),
+            }
+        case "UNWRAP_WETH":
+            decoded = abiCoder.decode(["address", "uint256"], inputForFunction);
+            return {
+                    function: swapCodes[foundFunction],
+                    recipient: decoded[0],
+                    amount: decoded[2].toString(),
             }
         default:
             console.info("No parseable execute function found in input.")

@@ -25,7 +25,7 @@ let router
     if (tx.to === (uniswapV2RouterAddress).toLowerCase()) {
       // Decode input data using Uniswap V2 Router ABI
       // const router = new web3.eth.Contract(UniswapV2RouterABI, uniswapV2RouterAddress);
-       inputData = tx.input;
+      //  inputData = tx.input;
        router =new ethers.utils.Interface(UniswapV2RouterABI);
        decodedInput = router.parseTransaction({ data: tx.data, value: tx.value});
   
@@ -34,8 +34,8 @@ let router
       return {isUniversal: false,isV2 : false,result : decodeUniswapV3Transaction(tx)}
       
     } else if (tx.to.toLowerCase() === uniswapV3UniversalAddress.toLowerCase()) {
+console.log("input",tx.input)
 
-      router =new ethers.utils.Interface(UniversalRouterABI);
 decodedInput =  decodeExecute(tx.data)
      return {isUniversal: true, isV2 :false,result :decodedInput}
     } else {
