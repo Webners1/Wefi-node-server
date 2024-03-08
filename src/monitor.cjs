@@ -37,10 +37,6 @@ const infuraWsUrl = "https://goerli.infura.io/v3/1f08eb6050734553aadea8b5ffebc6a
 
 // Create a new instance of the Web3 provider
 const web3 = new Web3(infuraWsUrl);
-// Set the confirmation threshold
-const confirmationThreshold = 3;
-
-let transactionHash;
 
 const getEvents = async (txHash) => {
   //@error isv2 is false, but function type is specifying that the function name is V2_SWAP_EXACT_OUT, tiggering the v2 swap function.
@@ -51,5 +47,5 @@ const getEvents = async (txHash) => {
 
 };
 
-getEvents("0x1cac6bb3afe90b4b58dc37f44be060a85acd22f535b6adfb2e6bfa97cf820e68")
+getEvents("0x61e5e093e97d16260982885e6225380239a618b45bd080daacfa8a2bfbcb8563")
 

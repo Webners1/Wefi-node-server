@@ -27,7 +27,7 @@ const web3 = new Web3('https://ethereum-goerli-rpc.publicnode.com');
 const PoolManagerLogic_address =
   '0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506';
 const PoolLogic_address =
-  '0x10f11aA5C924C8D1384CC5bE5E695322C21aEb49';
+  '0xf3c1c18bbE9Bb92fAA9FBd67A9C170a60051e73a';
 const V2Router = '0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506';
 const V3Router = '0xe592427a0aece92de3edee1f18e0157c05861564';
 const UNIVERSALRouter = '0x3fC91A3afd70395Cd496C647d5a6CC9D4B2b7FAD';
@@ -47,6 +47,7 @@ let isUniversal = true;
 let isV2;
 let name;
 let value;
+const wethAddress = '0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6';
 
 // Set your account address and private key
 const accountAddress = '0x7a491dA575A00b14A88DC4B9914E0c2323A1eFd3'; // Replace with your account's address
@@ -67,7 +68,7 @@ function functionNameToNumericCommandType(functionName) {
 
 const encodeUniversal = (swap) => {
   const { function: functionType, path } = swap;
-
+console.log("swap",swap)
   if (functionType === 'V3_SWAP_EXACT_IN') {
     return {
       isV2:false,
@@ -103,13 +104,13 @@ const encodeUniversal = (swap) => {
     };
   }
   else if (functionType === 'V2_SWAP_EXACT_IN') {
-    const wethAddress = '0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6';
     if (path[0] === wethAddress) {
       return {
-        isV2:true,name: "swapExactETHForTokens",
+        isV2:true,name: "swapExactTokensForTokens",
         inputArray: [
-          swap.amountOut,
-          [path[1], path[0]],
+          swap.amountIn,
+          swap.amountOut ?? "0",
+          [wethAddress, path[1]],
           PoolLogic_address,
           Math.floor(Date.now() / 1000) +
           60 * 3
@@ -117,11 +118,11 @@ const encodeUniversal = (swap) => {
       };
     } else if (path[1] === wethAddress) {
       return {
-        isV2:true,name: "swapExactTokensForETH",
+        isV2:true,name: "swapExactTokensForTokens",
         inputArray: [
           swap.amountIn,
-          "0",
-          [path[0], path[1]],
+          swap.amountOut ?? "0",
+          [path[0],wethAddress],
           PoolLogic_address,
           Math.floor(Date.now() / 1000) +
           60 * 3
@@ -133,7 +134,7 @@ const encodeUniversal = (swap) => {
         isV2:true,name: "swapExactTokensForTokens",
         inputArray: [
           swap.amountIn,
-          "0",
+          swap.amountOut ?? "0",
           [path[0], path[1]],
           PoolLogic_address,
           Math.floor(Date.now() / 1000) +
@@ -148,10 +149,11 @@ const encodeUniversal = (swap) => {
     const wethAddress = '0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6';
     if (path[0] === wethAddress) {
       return {
-        isV2:true,name: "swapETHForExactTokens",
+        isV2:true,name: "swapExactTokensForTokens",
         inputArray: [
-          '0',
-          [path[1], path[0]],
+          swap.amountIn,
+          swap.amountOut ?? "0",
+          [wethAddress, path[1]],
           PoolLogic_address,
           Math.floor(Date.now() / 1000) +
           60 * 3
@@ -159,11 +161,11 @@ const encodeUniversal = (swap) => {
       };
     } else if (path[1] === wethAddress) {
       return {
-        isV2:true,name: "swapTokensForExactETH",
+        isV2:true,name: "swapExactTokensForTokens",
         inputArray: [
           swap.amountIn,
-          "0",
-          [path[0], path[1]],
+          swap.amountOut ?? "0",
+          [path[0], wethAddress],
           PoolLogic_address,
           Math.floor(Date.now() / 1000) +
           60 * 3
@@ -172,10 +174,10 @@ const encodeUniversal = (swap) => {
     }
     else {
       return {
-        isV2:true,name: "swapTokensForExactTokens",
+        isV2:true,name: "swapExactTokensForTokens",
         inputArray: [
           swap.amountIn,
-          "0",
+          swap.amountOut ?? "0",
           [path[0], path[1]],
           PoolLogic_address,
           Math.floor(Date.now() / 1000) +
@@ -301,11 +303,12 @@ console.log(data)
     const necessaryValues = isV2
       ? necessaryKeys.map((key) => inputs[key]) // Remove last 8 elements to get only the params array
       : inputs[0];
+      console.log("fff",isV2,necessaryValues)
     const InputObject = isV2
       ? Object.assign({}, ...necessaryValues, {
         amountOutMin: '0',
-        path: inputs['1'],
-        to: accountAddress,
+        path: inputs[1],
+        to: PoolLogic_address,
         deadline: (
           Math.floor(Date.now() / 1000) +
           60 * 3
@@ -314,7 +317,7 @@ console.log(data)
       : necessaryValues.filter(
         (item) => typeof item !== 'object' || item._isBigNumber,
       );
-
+console.log("object",InputObject)
     inputArray = Object.values(InputObject);
     inputArray = convertBigNumbersToNumbers(inputArray);
   } else {
@@ -322,7 +325,7 @@ console.log(data)
     var { isV2, name, inputArray } = encodeUniversal(data)
   }
 
-  console.log("nn", name, "inp", inputArray)
+ console.log(name,inputArray)
   const to = isV2
       ? V2Router
       :  V3Router;
@@ -331,23 +334,36 @@ console.log(data)
       :new ethers.utils.Interface(UniswapRouterV3_ABI)
        
   swapABI = iUniswapRouter.encodeFunctionData(name, inputArray);
-  console.log("swapabi hogaya")
+
+  //Test Transaction
+  // swapABI = iUniswapRouter.encodeFunctionData("swapExactTokensForTokens", [
+  //   "100000000000000",
+  //   "1898000000",
+  //   ["0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6", "0x07865c6E87B9F70255377e024ace6630C1Eaa37F"],
+  //   PoolLogic_address,
+  //   Math.floor(Date.now() / 1000) +
+  //   60 * 300
+  // ]);
+
+
+  console.log("swapabi hogaya",swapABI)
   const txObject = PoolLogic.methods.execTransaction(to, swapABI);
   console.log("txobject", txObject)
 
   //@Check for Error here i have deployed the contract on goerli regarding Fund,manager the private key used is the Manager
   const gasPrice = await web3.eth.getGasPrice();
-  const gasEstimate = await txObject.estimateGas({
-    gasPrice,
-  });
+  // const gasEstimate = await txObject.estimateGas({
+  //   gasPrice,
+  // });
   const txParams = {
     from: accountAddress,
     to: PoolLogic_address,
     data: txObject.encodeABI(),
-    gas: gasEstimate,
+    // gas: gasEstimate,
     gasPrice: gasPrice,
-    value: value,
+    // value: value,
   };
+  console.log("param",txParams)
 
   const signedTx = await web3.eth.accounts.signTransaction(
     txParams,
