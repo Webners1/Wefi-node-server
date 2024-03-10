@@ -32,7 +32,7 @@ const PoolManagerLogic_address =
 const PoolLogic_address =
   '0xf3c1c18bbE9Bb92fAA9FBd67A9C170a60051e73a';
 const V2Router = '0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506';
-const V3Router = '0xe592427a0aece92de3edee1f18e0157c05861564';
+const V3Router = '0x68b3465833fb72A70ecDF485E0e4C7bD8665Fc45';
 const UNIVERSALRouter = '0x3fC91A3afd70395Cd496C647d5a6CC9D4B2b7FAD';
 // Create a contract instance
 const PoolManagerLogic = new web3.eth.Contract(
@@ -68,9 +68,7 @@ async function encodeApproveData(
   // Load the contract ABI for the token
 
   // Create a new instance of the token contract using the ABI and token address
-  const tokenContract = new ethers.utils.Interface(
-    Token_ABI
-  );
+  const tokenContract = new ethers.utils.Interface(Token_ABI);
 
   // Prepare the function parameters
 
@@ -110,7 +108,7 @@ async function isContractApproved(
   // Connect to Ethereum network using Web3 provider
 
   // Load the contract ABI for the token
-console.log("HDFHGH",tokenAddress)
+  console.log('HDFHGH', tokenAddress);
   // Create a new instance of the token contract using the ABI and token address
   const tokenContract = new web3.eth.Contract(
     Token_ABI,
@@ -125,12 +123,15 @@ console.log("HDFHGH",tokenAddress)
     .call();
 
   // Check if the allowance is greater than zero
-  const isApproved = allowance
-     > (amount);
-     console.log("allowa", Number(allowance)
-      ,(amount) )
+  const isApproved = allowance > amount;
+  console.log('allowa', Number(allowance), amount);
   if (!isApproved) {
-    return encodeApproveData(tokenAddress, spender, ethers.constants.MaxUint256, gasPrice);
+    return encodeApproveData(
+      tokenAddress,
+      spender,
+      ethers.constants.MaxUint256,
+      gasPrice,
+    );
   }
   return isApproved;
 }
@@ -168,7 +169,7 @@ function functionNameToNumericCommandType(functionName) {
 //     return {
 //       isV2: false,
 //       name: 'exactOutputSingle',
-      
+
 //       inputArray: [
 //         path[0],
 //         path[1],
@@ -263,68 +264,69 @@ function functionNameToNumericCommandType(functionName) {
 //     throw new Error('Invalid function type');
 //   }
 // };
+
 const encodeUniversal = (swap) => {
   const { function: functionType, path } = swap;
-  console.log(swap)
+  console.log(swap);
   if (functionType === 'V3_SWAP_EXACT_IN') {
     return {
       isV2: false,
       name: 'exactInputSingle',
       inputArray: [
-       [ path[0],
-        path[1],
-        swap.fee || '5000',
-        PoolLogic_address,
-        Math.floor(Date.now() / 1000) + 60 * 6,
-        swap.amountIn,
-        swap.amountOutMinimum || '0',
-        swap.sqrtPriceLimitX96 || '0']
+        [
+          path[0],
+          path[1],
+          swap.fee || '10000',
+          PoolLogic_address,
+          swap.amountIn,
+          swap.amountOut || '0',
+          swap.sqrtPriceLimitX96 || '0',
+        ],
       ],
     };
   } else if (functionType === 'V3_SWAP_EXACT_OUT') {
     return {
       isV2: false,
       name: 'exactOutputSingle',
-      
+
       inputArray: [
-     [   path[0],
-        path[1],
-        swap.fee || '3000',
-        PoolLogic_address,
-        Math.floor(Date.now() / 1000) + 60 * 3,
-        swap.amountOut || '0',
-        swap.amountInMaximum,
-        swap.sqrtPriceLimitX96 || '0']
+        [
+          path[0],
+          path[1],
+          swap.fee || '3000',
+          PoolLogic_address,
+          swap.amountOut || '0',
+          swap.amountIn,
+          swap.sqrtPriceLimitX96 || '0',
+        ],
       ],
     };
   } else if (functionType === 'V2_SWAP_EXACT_IN') {
-   
-      return {
-        isV2: true,
-        name: 'swapExactTokensForTokens',
-        inputArray: [
-          swap.amountIn,
-          swap.amountOut ?? '0',
-          [path[0], path[1]],
-          PoolLogic_address,
-          Math.floor(Date.now() / 1000) + 60 * 3,
-        ],
-      };
+    return {
+      isV2: true,
+      name: 'swapExactTokensForTokens',
+      inputArray: [
+        swap.amountIn,
+        swap.amountOut ?? '0',
+        [path[0], path[1]],
+        PoolLogic_address,
+        Math.floor(Date.now() / 1000) + 60 * 3,
+      ],
+    };
   }
   //@Fix the parameters of the function according to V2Router
   else if (functionType === 'V2_SWAP_EXACT_OUT') {
-   
-      return {
-        isV2: true,
-        name: 'swapExactTokensForTokens',
-        inputArray: [
-          swap.amountIn,
-          swap.amountOut ?? '0',
-          [path[0], path[1]],
-          PoolLogic_address,
-          Math.floor(Date.now() / 1000) + 60 * 3,
-        ],
-    }
+    return {
+      isV2: true,
+      name: 'swapExactTokensForTokens',
+      inputArray: [
+        swap.amountIn,
+        swap.amountOut ?? '0',
+        [path[0], path[1]],
+        PoolLogic_address,
+        Math.floor(Date.now() / 1000) + 60 * 3,
+      ],
+    };
   } else {
     throw new Error('Invalid function type');
   }
@@ -384,7 +386,7 @@ function deconstructTransactionDescription(txDescription) {
   } else {
     throw new Error(`Unknown function name: ${functionName}`);
   }
-  value = value?.toNumber().toString();
+  value = Number(value)?.toString();
   return {
     name,
     inputs,
@@ -424,11 +426,15 @@ async function execTransaction(isUniversal, isV2, data) {
         );
     inputArray = Object.values(InputObject);
     inputArray = convertBigNumbersToNumbers(inputArray);
+    if(!isV2){
+      inputArray[3] = PoolLogic_address;
+    inputArray = [inputArray]
+  }
+
   } else {
     var { isV2, name, inputArray, value } = encodeUniversal(data);
   }
-  console.log("inp, ",inputArray);
-  // inputArray = [inputArray]
+
   const to = isV2 ? V2Router : V3Router;
   const iUniswapRouter = isV2
     ? new ethers.utils.Interface(UniswapRouterV2_ABI)
@@ -436,14 +442,17 @@ async function execTransaction(isUniversal, isV2, data) {
   swapABI = iUniswapRouter.encodeFunctionData(name, inputArray);
   const gasPrice = await web3.eth.getGasPrice();
 
-
-  const approved =  await isContractApproved(
-    data?.path?data.path[0]: data.args.params[0],
+  const approved = await isContractApproved(
+    data?.path ? data.path[0] : data.args.params[0],
     to,
     PoolLogic_address,
-    data?.amountIn ? data?.amountIn:Number(data?.args.params.amountIn) ,
+    data?.amountIn
+      ? data?.amountIn
+      : Number(data?.args.params.amountIn),
     gasPrice,
-  )
+  );
+
+  console.log("inpt",inputArray);
 
   // const approved =  await isContractApproved(
   //   data?.path?data.path[0]: data.args.params[0],
@@ -452,10 +461,8 @@ async function execTransaction(isUniversal, isV2, data) {
   //   data?.amountIn ? data?.amountIn:Number(data?.args.params.amountIn) ,
   //   gasPrice,
   // )
-  
-  console.log(
-    "approved",approved
-  );
+
+  console.log('approved', approved);
   //Test Transaction
   // swapABI = iUniswapRouter.encodeFunctionData("swapExactTokensForTokens", [
   //   "100000000000000",
@@ -465,7 +472,6 @@ async function execTransaction(isUniversal, isV2, data) {
   //   Math.floor(Date.now() / 1000) +
   //   60 * 300
   // ]);
-  
 
   const txObject = PoolLogic.methods.execTransaction(to, swapABI);
 

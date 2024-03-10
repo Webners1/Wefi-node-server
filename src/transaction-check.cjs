@@ -8,7 +8,7 @@ const UniswapV3RouterABI = require('./uniswapV3.json');
 const UniversalRouterABI = require('./UniversalRouter.json');
 const web3 = new Web3('https://ethereum-goerli-rpc.publicnode.com');
 const uniswapV2RouterAddress = '0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506';
-const uniswapV3RouterAddress = '0xE592427A0AEce92De3Edee1F18E0157C05861564';
+const uniswapV3RouterAddress = '0x68b3465833fb72A70ecDF485E0e4C7bD8665Fc45';
 const uniswapV3UniversalAddress = '0x3fC91A3afd70395Cd496C647d5a6CC9D4B2b7FAD';
 const { decodeParameters } = require('web3-eth-abi');
 const { ethers } = require('ethers');
@@ -20,8 +20,9 @@ let router
   try {
     // Get transaction from node
     const tx = await web3.eth.getTransaction(txHash);
-
-    // Check if transaction is to Uniswap V2 Router
+    const receipt = await web3.eth.getTransactionReceipt(txHash);
+  
+  console.log("receipt",receipt.logs)  // Check if transaction is to Uniswap V2 Router
     if (tx.to === (uniswapV2RouterAddress).toLowerCase()) {
       // Decode input data using Uniswap V2 Router ABI
       // const router = new web3.eth.Contract(UniswapV2RouterABI, uniswapV2RouterAddress);
@@ -34,8 +35,6 @@ let router
       return {isUniversal: false,isV2 : false,result : decodeUniswapV3Transaction(tx)}
       
     } else if (tx.to.toLowerCase() === uniswapV3UniversalAddress.toLowerCase()) {
-console.log("input",tx.input)
-
 decodedInput =  decodeExecute(tx.data)
      return {isUniversal: true, isV2 :false,result :decodedInput}
     } else {
