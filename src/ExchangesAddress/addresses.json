@@ -3,5 +3,10 @@
         "UniswapV2": "0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D",
         "UniswapV3": "0xE592427A0AEce92De3Edee1F18E0157C05861564",
         "UniswapUniversal:": "0x3fC91A3afd70395Cd496C647d5a6CC9D4B2b7FAD"
+    },
+    {
+        "PancakeswapV2": "0x8cFe327CEc66d1C090Dd72bd0FF11d690C33a2Eb",
+        "PancakeswapV3": "0x1b81D678ffb9C0263b24A97847620C99d213eB14",
+        "PancakeswapSmart:": "0x32226588378236Fd0c7c4053999F88aC0e5cAc77"
     }
 ]
