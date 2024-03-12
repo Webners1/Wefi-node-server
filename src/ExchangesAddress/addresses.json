@@ -13,5 +13,9 @@
         "SushiswapV2": "0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506",
         "SushiswapV3": "0x1b81D678ffb9C0263b24A97847620C99d213eB14 // NOT FOUND",
         "SushiswapSwapRouter:": "0x8A21F6768C1f8075791D08546Dadf6daA0bE820c"
+    },
+    {
+        "CamelotV2": "0xc873fEcbd354f5A56E00E710B90EF4201db2448d",
+        "CamelotV3": "0x1F721E2E82F6676FCE4eA07A5958cF098D339e18"
     }
 ]
