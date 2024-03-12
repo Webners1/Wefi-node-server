@@ -22,5 +22,8 @@
         "RamsesV2": "0xAAA87963EFeB6f7E0a2711F397663105Acb1805e",
         "RamsesV3": "0xAA23611badAFB62D37E7295A682D21960ac85A90",
         "RamsesUniversalRouter:": "0xAA273216Cc9201A1e4285CA623f584BADc736944"
+    },
+    {
+        "SmarDexV2": "0xDA3970a20cdc2B1269fc96C4E8D300E0fdDB7b3D"
     }
 ]
