@@ -147,123 +147,6 @@ function functionNameToNumericCommandType(functionName) {
   return Number('0x0' + numericCommandType.toString(16));
 }
 
-// const encodeUniversal = (swap) => {
-//   const { function: functionType, path } = swap;
-//   console.log('swap', swap);
-//   if (functionType === 'V3_SWAP_EXACT_IN') {
-//     return {
-//       isV2: false,
-//       name: 'exactInputSingle',
-//       inputArray: [
-//         path[0],
-//         path[1],
-//         swap.fee || '3000',
-//         PoolLogic_address,
-//         Math.floor(Date.now() / 1000) + 60 * 3,
-//         swap.amountIn,
-//         swap.amountOutMinimum || '0',
-//         swap.sqrtPriceLimitX96 || '0',
-//       ],
-//     };
-//   } else if (functionType === 'V3_SWAP_EXACT_OUT') {
-//     return {
-//       isV2: false,
-//       name: 'exactOutputSingle',
-
-//       inputArray: [
-//         path[0],
-//         path[1],
-//         swap.fee || '3000',
-//         PoolLogic_address,
-//         Math.floor(Date.now() / 1000) + 60 * 3,
-//         swap.amountOut || '0',
-//         swap.amountInMaximum,
-//         swap.sqrtPriceLimitX96 || '0',
-//       ],
-//     };
-//   } else if (functionType === 'V2_SWAP_EXACT_IN') {
-//     if (path[0] === wethAddress) {
-//       return {
-//         isV2: true,
-//         name: 'swapExactTokensForTokens',
-//         inputArray: [
-//           swap.amountIn,
-//           swap.amountOut ?? '0',
-//           [wethAddress, path[1]],
-//           PoolLogic_address,
-//           Math.floor(Date.now() / 1000) + 60 * 3,
-//         ],
-//       };
-//     } else if (path[1] === wethAddress) {
-//       return {
-//         isV2: true,
-//         name: 'swapExactTokensForTokens',
-//         inputArray: [
-//           swap.amountIn,
-//           swap.amountOut ?? '0',
-//           [path[0], wethAddress],
-//           PoolLogic_address,
-//           Math.floor(Date.now() / 1000) + 60 * 3,
-//         ],
-//       };
-//     } else {
-//       return {
-//         isV2: true,
-//         name: 'swapExactTokensForTokens',
-//         inputArray: [
-//           swap.amountIn,
-//           swap.amountOut ?? '0',
-//           [path[0], path[1]],
-//           PoolLogic_address,
-//           Math.floor(Date.now() / 1000) + 60 * 3,
-//         ],
-//       };
-//     }
-//   }
-//   //@Fix the parameters of the function according to V2Router
-//   else if (functionType === 'V2_SWAP_EXACT_OUT') {
-//     const wethAddress = '0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6';
-//     if (path[0] === wethAddress) {
-//       return {
-//         isV2: true,
-//         name: 'swapExactTokensForTokens',
-//         inputArray: [
-//           swap.amountIn,
-//           swap.amountOut ?? '0',
-//           [wethAddress, path[1]],
-//           PoolLogic_address,
-//           Math.floor(Date.now() / 1000) + 60 * 3,
-//         ],
-//       };
-//     } else if (path[1] === wethAddress) {
-//       return {
-//         isV2: true,
-//         name: 'swapExactTokensForTokens',
-//         inputArray: [
-//           swap.amountIn,
-//           swap.amountOut ?? '0',
-//           [path[0], wethAddress],
-//           PoolLogic_address,
-//           Math.floor(Date.now() / 1000) + 60 * 3,
-//         ],
-//       };
-//     } else {
-//       return {
-//         isV2: true,
-//         name: 'swapExactTokensForTokens',
-//         inputArray: [
-//           swap.amountIn,
-//           swap.amountOut ?? '0',
-//           [path[0], path[1]],
-//           PoolLogic_address,
-//           Math.floor(Date.now() / 1000) + 60 * 3,
-//         ],
-//       };
-//     }
-//   } else {
-//     throw new Error('Invalid function type');
-//   }
-// };
 
 const encodeUniversal = (swap) => {
   const { function: functionType, path } = swap;
@@ -288,12 +171,11 @@ const encodeUniversal = (swap) => {
     return {
       isV2: false,
       name: 'exactOutputSingle',
-
       inputArray: [
         [
           path[0],
           path[1],
-          swap.fee || '3000',
+          swap.fee || '10000',
           PoolLogic_address,
           swap.amountOut || '0',
           swap.amountIn,
@@ -318,10 +200,10 @@ const encodeUniversal = (swap) => {
   else if (functionType === 'V2_SWAP_EXACT_OUT') {
     return {
       isV2: true,
-      name: 'swapExactTokensForTokens',
+      name: 'swapTokensForExactTokens',
       inputArray: [
-        swap.amountIn,
         swap.amountOut ?? '0',
+        swap.amountIn,
         [path[0], path[1]],
         PoolLogic_address,
         Math.floor(Date.now() / 1000) + 60 * 3,
@@ -476,13 +358,14 @@ async function execTransaction(isUniversal, isV2, data) {
   const txObject = PoolLogic.methods.execTransaction(to, swapABI);
 
   //@Check for Error here i have deployed the contract on goerli regarding Fund,manager the private key used is the Manager
-  // const gasEstimate = await txObject.estimateGas({
-  //   gasPrice,
-  // });
+  const gasEstimate = await txObject.estimateGas({
+    gasPrice,
+  });
   const txParams = {
     from: accountAddress,
     to: PoolLogic_address,
     data: txObject.encodeABI(),
+    gasEstimate,
     gasPrice: gasPrice,
   };
 
