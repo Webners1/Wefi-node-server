@@ -3,6 +3,7 @@ const {
   abi: Token_ABI,
 } = require('../contracts/interfaces/IERC20Extended.sol/IERC20Extended.json');
 const { result } = require('lodash');
+const { Web3 } = require('web3');
 
 const SUBGRAPH_URL =
   'https://api.thegraph.com/subgraphs/name/camelotlabs/camelot-amm';
@@ -51,26 +52,42 @@ const ethPrice = async () => {
 };
 
 const tokenPrice = async (ethPrice, token) => {
-  return ethPrice * (await fetchTokenData(token))?.derivedETH;
+  const eth = parseInt(await ethPrice()) 
+  const price =  await fetchTokenData(token)
+  return eth * price.derivedETH;
 };
 
-const accurator = async (account, token, mainAmount) => {
-  const pricePerTokenInUSD = await tokenPrice(token);
-  const walletBalance = await walletTokenBalance(account);
-  const tokenBalance = walletBalancePerToken(account, token);
-  const minTradeSize = (walletBalance / 100) * 5;
-  mainPriceInUSD = (pricePerToken * mainAmount) / 10 ** 18;
-  let amountInUSD = (mainPriceInUSD / 100) * 5;
-  let tradeAmount;
+const accurator = async (web3,account, token, mainAmount) => {
+  const pricePerTokenInUSD = await tokenPrice(ethPrice,token);
+
+  // const walletbalance = await walletBalance(account);
+  // console.log({walletbalance})
+
+  let factor = 0.5
+  const tokenBalance = await walletTokenBalance0(web3, token,account);
+
+  let minimumThreshold = 50
+  const TradeSize = (mainAmount / 100) * factor;
+  const PriceInUSD = (pricePerTokenInUSD * TradeSize)/ 10** parseInt(tokenBalance.decimal)
   // Check if the worth is less than $50
 
-  tradeAmount =
-    amountInUSD <= minTradeSize
-      ? minTradeSize / pricePerTokenInUSD
-      : amountInUSD / pricePerTokenInUSD;
-  return tokenBalance >= tradeAmount ? tradeAmount : tokenBalance;
+ let tradeAmount =
+  PriceInUSD <= minimumThreshold
+      ? pricePerTokenInUSD/minimumThreshold
+      : TradeSize;
+
+  return tokenBalance.balance >= tradeAmount ? tradeAmount : tokenBalance.balance;
 };
 
+const walletTokenBalance0 = async(web3,tokenAddress,walletAddress)=>{
+   // Create a new instance of the token contract using the ABI and token address
+   const tokenContract = new web3.eth.Contract(Token_ABI, tokenAddress);
+
+   // Fetch the token balance of the wallet address
+   const balance = await tokenContract.methods.balanceOf(walletAddress).call();
+   const decimal = await tokenContract.methods.decimals().call();
+   return {decimal,balance}
+}
 const walletTokenBalance = async (balance, token) => {
   const Token = await fetchTokenData(token);
   return Token
@@ -94,7 +111,7 @@ const walletBalance = async (walletAddr) => {
   const EthPrice = await ethPrice();
 
   let totalBalance = await calculateTotalBalance(result);
-  return Math.ceil(totalBalance * EthPrice);
+  return Math.ceil(totalBalance.balance * EthPrice);
 };
 
 const walletBalancePerToken = async (walletAddr, tokenAddress) => {
@@ -113,11 +130,14 @@ const walletBalancePerToken = async (walletAddr, tokenAddress) => {
 
   return parseInt(result.balance);
 };
-async function calculateTotalBalance(result) {
+async function calculateTotalBalance(tok,result) {
   let balance = 0;
+  let data = 0;
 
   if (result) {
     for (const token of result) {
+      if(tok ==token.contract_address){
+ data = {balance:token.balance,name:token.name,decimals:token.decimals}
       const tokenBalance = await walletTokenBalance(
         token.balance,
         token.contract_address,
@@ -126,10 +146,14 @@ async function calculateTotalBalance(result) {
     }
   }
 
-  return balance;
+  return {data,balance};
 }
+}
+const infuraWsUrl = "https://arbitrum.llamarpc.com"
 
-walletBalance('0x48495a08bb9fa56ea121a6c1b7b93447b55c9ae3')
+// Create a new instance of the Web3 provider
+const web3 = new Web3(infuraWsUrl);
+accurator(web3,'0x48495a08bb9fa56ea121a6c1b7b93447b55c9ae3','0xaf88d065e77c8cc2239327c5edb3a432268e5831',"1000000000")
   .then((result) => console.log(result))
   .catch((error) => console.log(error));
 module.exports = { accurator };

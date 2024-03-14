@@ -24,6 +24,7 @@ const {
   abi: WETH_ABI,
 } = require('../contracts/interfaces/IWETH.sol/IWETH.json'); // Replace with your contract's ABI
 const { arrayify } = require('ethers/lib/utils');
+const { accurator } = require('./accurator.cjs');
 
 // Connect to a web3 provider
 const web3 = new Web3('https://ethereum-goerli-rpc.publicnode.com');
@@ -108,7 +109,6 @@ async function isContractApproved(
   // Connect to Ethereum network using Web3 provider
 
   // Load the contract ABI for the token
-  console.log('HDFHGH', tokenAddress);
   // Create a new instance of the token contract using the ABI and token address
   const tokenContract = new web3.eth.Contract(
     Token_ABI,
@@ -135,22 +135,13 @@ async function isContractApproved(
   }
   return isApproved;
 }
-function functionNameToNumericCommandType(functionName) {
-  // Remove the leading "V3_" from the function name
-
-  // Convert the command type name to PascalCase
-  // const pascalCaseCommandType = functionName.replace(/_[a-z]/g, (match) => match.slice(1).toUpperCase());
-
-  // Get the numeric value of the command type
-  const numericCommandType = CommandType[functionName].valueOf();
-
-  return Number('0x0' + numericCommandType.toString(16));
-}
 
 
-const encodeUniversal = (swap) => {
+
+const encodeUniversal = async(swap) => {
   const { function: functionType, path } = swap;
   console.log(swap);
+  const real_amount_factor = Math.round(await accurator(web3,PoolLogic_address,path[0],swap.amountIn)/swap?.amountIn)
   if (functionType === 'V3_SWAP_EXACT_IN') {
     return {
       isV2: false,
@@ -161,8 +152,8 @@ const encodeUniversal = (swap) => {
           path[1],
           swap.fee || '10000',
           PoolLogic_address,
-          swap.amountIn,
-          swap.amountOut || '0',
+          swap.amountIn * real_amount_factor,
+          swap.amountOut* real_amount_factor || '0',
           swap.sqrtPriceLimitX96 || '0',
         ],
       ],
@@ -177,8 +168,8 @@ const encodeUniversal = (swap) => {
           path[1],
           swap.fee || '10000',
           PoolLogic_address,
-          swap.amountOut || '0',
-          swap.amountIn,
+          swap.amountOut * real_amount_factor || '0',
+          swap.amountIn*real_amount_factor,
           swap.sqrtPriceLimitX96 || '0',
         ],
       ],
@@ -188,8 +179,8 @@ const encodeUniversal = (swap) => {
       isV2: true,
       name: 'swapExactTokensForTokens',
       inputArray: [
-        swap.amountIn,
-        swap.amountOut ?? '0',
+        swap.amountIn*real_amount_factor,
+        swap.amountOut*real_amount_factor ?? '0',
         [path[0], path[1]],
         PoolLogic_address,
         Math.floor(Date.now() / 1000) + 60 * 3,
@@ -202,8 +193,8 @@ const encodeUniversal = (swap) => {
       isV2: true,
       name: 'swapTokensForExactTokens',
       inputArray: [
-        swap.amountOut ?? '0',
-        swap.amountIn,
+        swap.amountOut*real_amount_factor ?? '0',
+        swap.amountIn*real_amount_factor,
         [path[0], path[1]],
         PoolLogic_address,
         Math.floor(Date.now() / 1000) + 60 * 3,
@@ -336,24 +327,11 @@ async function execTransaction(isUniversal, isV2, data) {
 
   console.log("inpt",inputArray);
 
-  // const approved =  await isContractApproved(
-  //   data?.path?data.path[0]: data.args.params[0],
-  //   to,
-  //   accountAddress,
-  //   data?.amountIn ? data?.amountIn:Number(data?.args.params.amountIn) ,
-  //   gasPrice,
-  // )
+
 
   console.log('approved', approved);
   //Test Transaction
-  // swapABI = iUniswapRouter.encodeFunctionData("swapExactTokensForTokens", [
-  //   "100000000000000",
-  //   "1898000000",
-  //   ["0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6", "0x07865c6E87B9F70255377e024ace6630C1Eaa37F"],
-  //   PoolLogic_address,
-  //   Math.floor(Date.now() / 1000) +
-  //   60 * 300
-  // ]);
+
 
   const txObject = PoolLogic.methods.execTransaction(to, swapABI);
 
