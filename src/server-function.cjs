@@ -25,15 +25,20 @@ const {
 } = require('../contracts/interfaces/IWETH.sol/IWETH.json'); // Replace with your contract's ABI
 const { arrayify } = require('ethers/lib/utils');
 const { accurator } = require('./accurator.cjs');
-
+const { AlphaRouter, UniswapMulticallProvider, SwapType } = require('@uniswap/smart-order-router');
+const { TradeType, ChainId, Token, CurrencyAmount } = require('@uniswap/sdk-core');
+const { Protocol } = require('@uniswap/router-sdk');
+const { JsonRpcProvider } = require('@ethersproject/providers');
+const { default: JSBI } = require('jsbi');
+require('dotenv').config()
 // Connect to a web3 provider
-const web3 = new Web3('https://ethereum-goerli-rpc.publicnode.com');
+const web3 = new Web3(process.env.RPC);
 const PoolManagerLogic_address =
-  '0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506';
+  '0xacd5d3d49502eade3f9f7b20524a6f1e3a14fdb7';
 const PoolLogic_address =
-  '0xf3c1c18bbE9Bb92fAA9FBd67A9C170a60051e73a';
-const V2Router = '0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506';
-const V3Router = '0x68b3465833fb72A70ecDF485E0e4C7bD8665Fc45';
+  '0x6BbA366F2AB98D5B025776A15b8b26B5fdff092b';
+const V2Router = '0xC532a74256D3Db42D0Bf7a0400fEFDbad7694008';
+const V3Router = '0x3bFA4769FB09eefC5a80d6E87c3B9C650f7Ae48E';
 const UNIVERSALRouter = '0x3fC91A3afd70395Cd496C647d5a6CC9D4B2b7FAD';
 // Create a contract instance
 const PoolManagerLogic = new web3.eth.Contract(
@@ -140,8 +145,19 @@ async function isContractApproved(
 
 const encodeUniversal = async(swap) => {
   const { function: functionType, path } = swap;
-  console.log(swap);
-  const real_amount_factor = Math.round(await accurator(web3,PoolLogic_address,path[0],swap.amountIn)/swap?.amountIn)
+  const provider = new JsonRpcProvider(process.env.RPC,ChainId.SEPOLIA)
+  const router = new AlphaRouter({ chainId: ChainId.SEPOLIA ,provider});
+  // const real_amount_factor = Math.round(await accurator(web3,PoolLogic_address,path[0],swap.amountIn)/swap?.amountIn)
+  const real_amount_factor = 0.5
+  let amountIn = Math.round(swap.amountIn * real_amount_factor).toString()
+  let amountOut = Math.round(swap.amountOut* real_amount_factor).toString()
+const tokenIn = ( new Token(ChainId.SEPOLIA,path[0],18,'MTKs'))
+const tokenOut = ( new Token(ChainId.SEPOLIA,path[1],18,'MTKs'))
+const amount = CurrencyAmount.fromRawAmount(tokenIn, (parseInt(amountIn)))
+  const route = await router.route(amount,tokenOut, TradeType.EXACT_INPUT)
+  const realamountout = (parseInt(route.route[0].rawQuote)).toString()
+ console.log("rote",)
+ console.log("rote",realamountout,amountIn)
   if (functionType === 'V3_SWAP_EXACT_IN') {
     return {
       isV2: false,
@@ -150,10 +166,10 @@ const encodeUniversal = async(swap) => {
         [
           path[0],
           path[1],
-          swap.fee || '10000',
+          swap.fee || '3000',
           PoolLogic_address,
-          swap.amountIn * real_amount_factor,
-          swap.amountOut* real_amount_factor || '0',
+          amountIn,
+          amountOut || '0',
           swap.sqrtPriceLimitX96 || '0',
         ],
       ],
@@ -168,8 +184,8 @@ const encodeUniversal = async(swap) => {
           path[1],
           swap.fee || '10000',
           PoolLogic_address,
-          swap.amountOut * real_amount_factor || '0',
-          swap.amountIn*real_amount_factor,
+          amountOut || '0',
+          amountIn,
           swap.sqrtPriceLimitX96 || '0',
         ],
       ],
@@ -179,8 +195,8 @@ const encodeUniversal = async(swap) => {
       isV2: true,
       name: 'swapExactTokensForTokens',
       inputArray: [
-        swap.amountIn*real_amount_factor,
-        swap.amountOut*real_amount_factor ?? '0',
+        amountIn,
+        amountOut ?? '0',
         [path[0], path[1]],
         PoolLogic_address,
         Math.floor(Date.now() / 1000) + 60 * 3,
@@ -193,8 +209,8 @@ const encodeUniversal = async(swap) => {
       isV2: true,
       name: 'swapTokensForExactTokens',
       inputArray: [
-        swap.amountOut*real_amount_factor ?? '0',
-        swap.amountIn*real_amount_factor,
+        amountOut ?? '0',
+        amountIn,
         [path[0], path[1]],
         PoolLogic_address,
         Math.floor(Date.now() / 1000) + 60 * 3,
@@ -305,9 +321,10 @@ async function execTransaction(isUniversal, isV2, data) {
   }
 
   } else {
-    var { isV2, name, inputArray, value } = encodeUniversal(data);
+    var { isV2, name, inputArray } = await encodeUniversal(data);
+console.log("inp",inputArray)
+ 
   }
-
   const to = isV2 ? V2Router : V3Router;
   const iUniswapRouter = isV2
     ? new ethers.utils.Interface(UniswapRouterV2_ABI)
@@ -325,16 +342,14 @@ async function execTransaction(isUniversal, isV2, data) {
     gasPrice,
   );
 
-  console.log("inpt",inputArray);
 
 
 
-  console.log('approved', approved);
   //Test Transaction
 
 
   const txObject = PoolLogic.methods.execTransaction(to, swapABI);
-
+console.log(swapABI)
   //@Check for Error here i have deployed the contract on goerli regarding Fund,manager the private key used is the Manager
   const gasEstimate = await txObject.estimateGas({
     gasPrice,

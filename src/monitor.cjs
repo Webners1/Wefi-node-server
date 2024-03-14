@@ -4,9 +4,11 @@ const {getTransactionDetails} = require('./transaction-check.cjs');
 const {Web3} = require('web3');
 const WebSocket = require('ws');
 
+require('dotenv').config()
 
 // Installation: npm install alchemy-sdk
 const { Alchemy, Network, AlchemySubscription } = require("alchemy-sdk");
+const { configDotenv } = require('dotenv');
 
 const settings = {
   apiKey: "8u_Y-TzFMwVvoX5WDEFY5Eho7VFSUrJj", // Replace with your Alchemy API Key
@@ -33,7 +35,7 @@ alchemy.ws.on(
 );
 
 // Replace YOUR_WALLET_ADDRESS with the address you want to monitor
-const infuraWsUrl = "https://goerli.infura.io/v3/1f08eb6050734553aadea8b5ffebc6a1"
+const infuraWsUrl = process.env.RPC
 
 // Create a new instance of the Web3 provider
 const web3 = new Web3(infuraWsUrl);
@@ -46,5 +48,5 @@ const getEvents = async (txHash) => {
 
 };
 
-getEvents("0xed2fed285944e81cee87beb05c7fcbcf7165a6e8e6104bf4d0a788ee95386f29")
+getEvents("0x862f6a7b2affbdf8ac15e25c127702a09b61f296237545cb03e999c4a1151f5a")
 

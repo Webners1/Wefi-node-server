@@ -6,23 +6,23 @@ const {Web3} = require('web3');
 const UniswapV2RouterABI = require('./uniswapV2.json');
 const UniswapV3RouterABI = require('./uniswapV3.json');
 const UniversalRouterABI = require('./UniversalRouter.json');
-const web3 = new Web3('https://ethereum-goerli-rpc.publicnode.com');
-const uniswapV2RouterAddress = '0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506';
-const uniswapV3RouterAddress = '0x68b3465833fb72A70ecDF485E0e4C7bD8665Fc45';
+const web3 = new Web3(process.env.RPC);
+const uniswapV2RouterAddress = '0xC532a74256D3Db42D0Bf7a0400fEFDbad7694008';
+const uniswapV3RouterAddress = '0x3bFA4769FB09eefC5a80d6E87c3B9C650f7Ae48E';
 const uniswapV3UniversalAddress = '0x3fC91A3afd70395Cd496C647d5a6CC9D4B2b7FAD';
 const { decodeParameters } = require('web3-eth-abi');
 const { ethers } = require('ethers');
 
-
+require('dotenv').config()
 let decodedInput
 let router
  async function getTransactionDetails(txHash) {
   try {
     // Get transaction from node
     const tx = await web3.eth.getTransaction(txHash);
-    const receipt = await web3.eth.getTransactionReceipt(txHash);
+  //   const receipt = await web3.eth.getTransactionReceipt(txHash);
   
-  console.log("receipt",receipt.logs)  // Check if transaction is to Uniswap V2 Router
+  // console.log("receipt",receipt.logs)  // Check if transaction is to Uniswap V2 Router
     if (tx.to === (uniswapV2RouterAddress).toLowerCase()) {
       // Decode input data using Uniswap V2 Router ABI
       // const router = new web3.eth.Contract(UniswapV2RouterABI, uniswapV2RouterAddress);
