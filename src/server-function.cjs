@@ -154,10 +154,10 @@ const encodeUniversal = async(swap) => {
 const tokenIn = ( new Token(ChainId.SEPOLIA,path[0],18,'MTKs'))
 const tokenOut = ( new Token(ChainId.SEPOLIA,path[1],18,'MTKs'))
 const amount = CurrencyAmount.fromRawAmount(tokenIn, (parseInt(amountIn)))
-  const route = await router.route(amount,tokenOut, TradeType.EXACT_INPUT)
+  const route = await router.route(amount,tokenOut, TradeType.EXACT_OUTPUT)
   const realamountout = (parseInt(route.route[0].rawQuote)).toString()
  console.log("rote",)
- console.log("rote",realamountout,amountIn)
+ console.log("rote",realamountout)
   if (functionType === 'V3_SWAP_EXACT_IN') {
     return {
       isV2: false,
@@ -169,7 +169,7 @@ const amount = CurrencyAmount.fromRawAmount(tokenIn, (parseInt(amountIn)))
           swap.fee || '3000',
           PoolLogic_address,
           amountIn,
-          amountOut || '0',
+          realamountout || '0',
           swap.sqrtPriceLimitX96 || '0',
         ],
       ],
@@ -182,9 +182,9 @@ const amount = CurrencyAmount.fromRawAmount(tokenIn, (parseInt(amountIn)))
         [
           path[0],
           path[1],
-          swap.fee || '10000',
+          swap.fee || '3000',
           PoolLogic_address,
-          amountOut || '0',
+          realamountout || '0',
           amountIn,
           swap.sqrtPriceLimitX96 || '0',
         ],
