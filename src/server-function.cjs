@@ -1,3 +1,5 @@
+const { encodeRouteToPath } = require('./encodeRoutetoPath.cjs');
+
 const { CommandType, RoutePlanner } = require('./commandType.cjs');
 
 const { Web3 } = require('web3');
@@ -14,6 +16,8 @@ const {
 const {
   abi: PoolLogic_ABI,
 } = require('../contracts/PoolLogic.sol/PoolLogic.json'); // Replace with your contract's ABI
+const UniswapV3RouterABI = require('./uniswapV3.json');
+
 const {
   abi: PoolFactory_ABI,
 } = require('../contracts/PoolFactory.sol/PoolFactory.json'); // Replace with your contract's ABI
@@ -25,12 +29,21 @@ const {
 } = require('../contracts/interfaces/IWETH.sol/IWETH.json'); // Replace with your contract's ABI
 const { arrayify } = require('ethers/lib/utils');
 const { accurator } = require('./accurator.cjs');
-const { AlphaRouter, UniswapMulticallProvider, SwapType } = require('@uniswap/smart-order-router');
-const { TradeType, ChainId, Token, CurrencyAmount } = require('@uniswap/sdk-core');
+const {
+  AlphaRouter,
+  UniswapMulticallProvider,
+  SwapType,
+} = require('@uniswap/smart-order-router');
+const {
+  TradeType,
+  ChainId,
+  Token,
+  CurrencyAmount,
+} = require('@uniswap/sdk-core');
 const { Protocol } = require('@uniswap/router-sdk');
 const { JsonRpcProvider } = require('@ethersproject/providers');
 const { default: JSBI } = require('jsbi');
-require('dotenv').config()
+require('dotenv').config();
 // Connect to a web3 provider
 const web3 = new Web3(process.env.RPC);
 const PoolManagerLogic_address =
@@ -129,7 +142,6 @@ async function isContractApproved(
 
   // Check if the allowance is greater than zero
   const isApproved = allowance > amount;
-  console.log('allowa', Number(allowance), amount);
   if (!isApproved) {
     return encodeApproveData(
       tokenAddress,
@@ -138,27 +150,97 @@ async function isContractApproved(
       gasPrice,
     );
   }
+  console.log("Token Approved!!")
   return isApproved;
 }
 
-
-
-const encodeUniversal = async(swap) => {
+const encodeUniversal = async (swap) => {
   const { function: functionType, path } = swap;
-  const provider = new JsonRpcProvider(process.env.RPC,ChainId.SEPOLIA)
-  const router = new AlphaRouter({ chainId: ChainId.SEPOLIA ,provider});
+  const provider = new JsonRpcProvider(
+    process.env.RPC,
+    ChainId.SEPOLIA,
+  );
+  const router = new AlphaRouter({
+    chainId: ChainId.SEPOLIA,
+    provider,
+  });
   // const real_amount_factor = Math.round(await accurator(web3,PoolLogic_address,path[0],swap.amountIn)/swap?.amountIn)
-  const real_amount_factor = 0.5
-  let amountIn = Math.round(swap.amountIn * real_amount_factor).toString()
-  let amountOut = Math.round(swap.amountOut* real_amount_factor).toString()
-const tokenIn = ( new Token(ChainId.SEPOLIA,path[0],18,'MTKs'))
-const tokenOut = ( new Token(ChainId.SEPOLIA,path[1],18,'MTKs'))
-const amount = CurrencyAmount.fromRawAmount(tokenIn, (parseInt(amountIn)))
-  const route = await router.route(amount,tokenOut, TradeType.EXACT_OUTPUT)
-  const realamountout = (parseInt(route.route[0].rawQuote)).toString()
- console.log("rote",)
- console.log("rote",realamountout)
-  if (functionType === 'V3_SWAP_EXACT_IN') {
+  const real_amount_factor = 1;
+  let amountIn = Math.round(
+    swap.amountIn * real_amount_factor,
+  ).toString();
+  let amountOut = Math.round(
+    swap.amountOut * real_amount_factor,
+  ).toString();
+  const tokenIn = new Token(ChainId.SEPOLIA, path[0], 18, 'MTKs');
+  const tokenOut = new Token(
+    ChainId.SEPOLIA,
+    path[path.length - 1],
+    18,
+    'MTKs',
+  );
+
+  const amount = CurrencyAmount.fromRawAmount(
+    tokenIn,
+    parseInt(amountIn),
+  );
+  const route = await router.route(
+    amount,
+    tokenOut,
+    functionType === 'V3_SWAP_EXACT_IN'
+      ? TradeType.EXACT_INPUT
+      : TradeType.EXACT_OUTPUT,
+  );
+
+  const tradeType = route.route[0].tradeType;
+  const AmountIn =
+    tradeType === TradeType.EXACT_INPUT
+      ? route.route[0].amount.quotient.toString()
+      : route.route[0].quote.quotient.toString();
+  const AmountOut =
+    tradeType === TradeType.EXACT_INPUT
+      ? route.route[0].quote.quotient.toString()
+      : route.route[0].amount.quotient.toString();
+
+  const pools =
+    route.route[0].protocol === Protocol.V2
+      ? route.route[0].route.pairs
+      : route.route[0].route.pools;
+  if (path.length > 2) {
+    const token_path = encodeRouteToPath(
+      route.route[0].route,
+      functionType !== 'V3_SWAP_EXACT_IN',
+    );
+    if (functionType === 'V3_SWAP_EXACT_IN') {
+      return {
+        isV2: false,
+        name: 'exactInput',
+        inputArray: 
+        [  [
+            token_path,
+            PoolLogic_address,
+            AmountIn,
+            AmountOut,
+          ]]
+      
+      };
+    } else {
+      return {
+        isV2: false,
+        name: 'exactOutput',
+        inputArray: [
+          [
+            token_path,
+            PoolLogic_address,
+            AmountOut,
+            AmountIn,
+          ],
+        ],
+      };
+    }
+  }
+
+  if (path.length <= 2 && functionType === 'V3_SWAP_EXACT_IN') {
     return {
       isV2: false,
       name: 'exactInputSingle',
@@ -166,15 +248,18 @@ const amount = CurrencyAmount.fromRawAmount(tokenIn, (parseInt(amountIn)))
         [
           path[0],
           path[1],
-          swap.fee || '3000',
+          pools[0].fee || '3000',
           PoolLogic_address,
-          amountIn,
-          realamountout || '0',
-          swap.sqrtPriceLimitX96 || '0',
+          AmountIn,
+          AmountOut || '0',
+          '0',
         ],
       ],
     };
-  } else if (functionType === 'V3_SWAP_EXACT_OUT') {
+  } else if (
+    path.length <= 2 &&
+    functionType === 'V3_SWAP_EXACT_OUT'
+  ) {
     return {
       isV2: false,
       name: 'exactOutputSingle',
@@ -182,11 +267,11 @@ const amount = CurrencyAmount.fromRawAmount(tokenIn, (parseInt(amountIn)))
         [
           path[0],
           path[1],
-          swap.fee || '3000',
+          pools[0].fee || '3000',
           PoolLogic_address,
-          realamountout || '0',
-          amountIn,
-          swap.sqrtPriceLimitX96 || '0',
+          AmountOut || '0',
+          AmountIn,
+          pools[0].sqrtRatioX96.toString() || '0',
         ],
       ],
     };
@@ -247,6 +332,8 @@ function deconstructTransactionDescription(txDescription) {
     'swapTokensForExactETH',
     'swapExactTokensForETH',
     'swapETHForExactTokens',
+    'swapExactTokensForTokensSupportingFeeOnTransferTokens',
+    'swapExactETHForTokensSupportingFeeOnTransferTokens',
   ];
 
   const v3FunctionNames = [
@@ -282,10 +369,66 @@ function deconstructTransactionDescription(txDescription) {
     value,
   };
 }
+const v2Paramater = (name,array)=>{
+  console.log(array)
+   if (name === 'swapExactTokensForTokens' || 'swapExactETHForTokens') {
+    return {
+      name:'swapTokensForExactTokens',
+      inputArray: [
+        array?.amountIn ?? '0',
+        array?.amountOut ?? '0',
+        array.path,
+        PoolLogic_address,
+        Math.floor(Date.now() / 1000) + 60 * 3,
+      ],
+    };
+  }
+  //@Fix the parameters of the function according to V2Router
+  else if (name === 'swapTokensForExactTokens' || 'swapETHForExactTokens') {
+    return {
+      name:'swapTokensForExactTokens',
+      inputArray: [
+        array?.amountOut ?? '0',
+        array?.amountIn ?? '0',
+        array.path,
+        PoolLogic_address,
+        Math.floor(Date.now() / 1000) + 60 * 3,
+      ],
+    };
+  
+  // return array.filter(item => typeof item == 'object' || item._isBigNumber);
+}
+else if(name === 'swapExactTokensForTokensSupportingFeeOnTransferTokens' || 'swapExactETHForTokensSupportingFeeOnTransferTokens'){
+  return {
+    name:'swapExactTokensForTokensSupportingFeeOnTransferTokens',
+    inputArray: [
+      array?.amountOut ?? '0',
+      array.path,
+      PoolLogic_address,
+      Math.floor(Date.now() / 1000) + 60 * 3,
+    ],
+  };
+}
+}
 
+const decodeMulticall= (calls)=>{
+    const abiInterface = new ethers.utils.Interface(UniswapV3RouterABI);
+    return calls.map(call => {
+      try {
+        const func = call.slice(0, 10);
+        const decodedArgs = abiInterface.decodeFunctionData(func, call)
+        const functionName = abiInterface.getFunction(func).name
+        return {name: functionName, args: decodedArgs};
+      }
+      catch (ex) {
+        return; // you could return a type here to indicate it was not parsed
+      }
+    })
+}
 async function execTransaction(isUniversal, isV2, data) {
-  console.log(data);
 
+  console.log(decodeMulticall(data.args[1]))
+  return;
   if (!isUniversal) {
     let {
       name: functionName,
@@ -294,37 +437,23 @@ async function execTransaction(isUniversal, isV2, data) {
     } = deconstructTransactionDescription(data);
     name = functionName;
     value = val;
-    const necessaryKeys = Object.keys(inputs).filter(
-      (key) => typeof key !== 'string',
-    );
-    const necessaryValues = isV2
-      ? necessaryKeys.map((key) => inputs[key]) // Remove last 8 elements to get only the params array
-      : inputs[0];
-    const InputObject = isV2
-      ? Object.assign({}, ...necessaryValues, {
-          amountOutMin: '0',
-          path: inputs[1],
-          to: PoolLogic_address,
-          deadline: (
-            Math.floor(Date.now() / 1000) +
-            60 * 3
-          ).toString(),
-        })
-      : necessaryValues.filter(
+   
+    var name, inputArray = (v2Paramater(functionName,inputs))
+    if (!isV2) {
+      const necessaryValues = inputs[0];
+    const InputObject =  necessaryValues.filter(
           (item) => typeof item !== 'object' || item._isBigNumber,
         );
     inputArray = Object.values(InputObject);
     inputArray = convertBigNumbersToNumbers(inputArray);
-    if(!isV2){
       inputArray[3] = PoolLogic_address;
-    inputArray = [inputArray]
-  }
-
+      inputArray = [inputArray];
+    }
   } else {
     var { isV2, name, inputArray } = await encodeUniversal(data);
-console.log("inp",inputArray)
- 
   }
+  console.log(name,inputArray)
+return;
   const to = isV2 ? V2Router : V3Router;
   const iUniswapRouter = isV2
     ? new ethers.utils.Interface(UniswapRouterV2_ABI)
@@ -342,14 +471,10 @@ console.log("inp",inputArray)
     gasPrice,
   );
 
-
-
-
   //Test Transaction
 
-
   const txObject = PoolLogic.methods.execTransaction(to, swapABI);
-console.log(swapABI)
+  console.log('Transaction Built');
   //@Check for Error here i have deployed the contract on goerli regarding Fund,manager the private key used is the Manager
   const gasEstimate = await txObject.estimateGas({
     gasPrice,
@@ -368,6 +493,7 @@ console.log(swapABI)
   //   data: txObject.encodeABI(),
   //   gasPrice: gasPrice,
   // };
+  console.log('Transaction Sent');
 
   const signedTx = await web3.eth.accounts.signTransaction(
     txParams,

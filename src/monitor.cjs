@@ -12,7 +12,7 @@ const { configDotenv } = require('dotenv');
 
 const settings = {
   apiKey: "8u_Y-TzFMwVvoX5WDEFY5Eho7VFSUrJj", // Replace with your Alchemy API Key
-  network: Network.ETH_GOERLI, // Replace with your network
+  network: Network.ARB_GOERLI, // Replace with your network
 };
 const monitoredWalletAddress = '0xbE7167396cF48578186FF088d6a978081b205b5d';
 
@@ -48,5 +48,5 @@ const getEvents = async (txHash) => {
 
 };
 
-getEvents("0x47039643008753571ced480cce599a70526156c45d94d6b0b6b4e01ac18b376f")
+getEvents("0x86c7376867315bd652b67e35bb74e284d634bb70ba03c8e563c4846449a600b6")
 
