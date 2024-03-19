@@ -428,7 +428,6 @@ const decodeMulticall= (calls)=>{
 async function execTransaction(isUniversal, isV2, data) {
 
   console.log(decodeMulticall(data.args[1]))
-  return;
   if (!isUniversal) {
     let {
       name: functionName,
@@ -453,7 +452,6 @@ async function execTransaction(isUniversal, isV2, data) {
     var { isV2, name, inputArray } = await encodeUniversal(data);
   }
   console.log(name,inputArray)
-return;
   const to = isV2 ? V2Router : V3Router;
   const iUniswapRouter = isV2
     ? new ethers.utils.Interface(UniswapRouterV2_ABI)
