@@ -6,14 +6,14 @@ const {Web3} = require('web3');
 const UniswapV2RouterABI = require('./uniswapV2.json');
 const UniswapV3RouterABI = require('./uniswapV3.json');
 const UniversalRouterABI = require('./UniversalRouter.json');
+require('dotenv').config()
 const web3 = new Web3(process.env.RPC);
-const uniswapV2RouterAddress = '0x10ED43C718714eb63d5aA57B78B54704E256024E';
-const uniswapV3RouterAddress = '0x13f4EA83D0bd40E75C8222255bc855a974568Dd4';
-const uniswapV3UniversalAddress = '0x3fC91A3afd70395Cd496C647d5a6CC9D4B2b7FAD';
 const { decodeParameters } = require('web3-eth-abi');
 const { ethers } = require('ethers');
 
-require('dotenv').config()
+const uniswapV2RouterAddress = process.env.ROUTERV2;
+const uniswapV3RouterAddress = process.env.ROUTERV3;
+const uniswapV3UniversalAddress = process.env.UNIVERSALROUTER;
 let decodedInput
 let router
  async function getTransactionDetails(txHash) {

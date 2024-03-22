@@ -1,4 +1,4 @@
-const { pack } = require('@ethersproject/solidity');
+const { pack, } = require('@ethersproject/solidity');
 
 /**
  * Converts a route to a hex encoded path
@@ -30,7 +30,13 @@ function encodeRouteToPath(route, exactOutput) {
 
   return exactOutput ? pack(types.reverse(), path.reverse()) : pack(types, path);
 }
+function decodeRouteFromPath(encodedPath, exactOutput) {
+ if(exactOutput){
 
+ }
+
+  return { types, path, pools };
+}
 module.exports = {
-  encodeRouteToPath,
+  encodeRouteToPath,decodeRouteFromPath
 };
