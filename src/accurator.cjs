@@ -149,7 +149,7 @@ async function calculateTotalBalance(tok,result) {
   return {data,balance};
 }
 }
-const infuraWsUrl = "https://arbitrum.llamarpc.com"
+const infuraWsUrl = "https://ethereum-sepolia-rpc.publicnode.com"
 
 // Create a new instance of the Web3 provider
 const web3 = new Web3(infuraWsUrl);
