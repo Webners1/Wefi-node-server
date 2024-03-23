@@ -70,12 +70,10 @@ let isUniversal = true;
 let isV2;
 let name;
 let value;
-const wethAddress = '0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6';
 
 // Set your account address and private key
-const accountAddress = '0x7a491dA575A00b14A88DC4B9914E0c2323A1eFd3'; // Replace with your account's address
-const privateKey =
-  '0xa204996d053cf1e9abb3bd6001158a91e736c3fce1ab278765f676fce0c07f23'; // Replace with your account's private key
+const accountAddress = process.env.ACCOUNT // Replace with your account's address
+const privateKey =process.env.PRIVATE_KEY
 const provider = new JsonRpcProvider(
   process.env.RPC,
   ChainId.SEPOLIA,
@@ -128,7 +126,6 @@ async function isContractApproved(
   amount
 ) {
   // Connect to Ethereum network using Web3 provider
-  const gasPrice = await web3.eth.getGasPrice();
 
   // Load the contract ABI for the token
   // Create a new instance of the token contract using the ABI and token address
@@ -146,7 +143,9 @@ async function isContractApproved(
 
   // Check if the allowance is greater than zero
   const isApproved = allowance > amount;
+  console.log({isApproved, allowance , amount})
   if (!isApproved) {
+  const gasPrice = await web3.eth.getGasPrice();
     return encodeApproveData(
       tokenAddress,
       spender,
@@ -486,10 +485,10 @@ function deconstructTransactionDescription(txDescription) {
 //   }
 // };
 
-const v2Parameter = async (name, array) => {
+const v2Parameter = async (name, array,value) => {
   const { path, amountIn, amountOut } = array;
 
-  await isContractApproved(path[0], V2Router, PoolLogic_address, amountIn);
+  await isContractApproved(path[0], V2Router, PoolLogic_address, amountIn ?? value);
 
   const deadline = Math.floor(Date.now() / 1000) + 60 * 3;
   const recipient = PoolLogic_address;
@@ -497,23 +496,20 @@ const v2Parameter = async (name, array) => {
   switch (name) {
     case 'swapExactTokensForTokens':
     case 'swapExactETHForTokens':
+    case 'swapExactTokensForTokensSupportingFeeOnTransferTokens':
+    case 'swapExactETHForTokensSupportingFeeOnTransferTokens':
+    case 'swapExactTokensForETHSupportingFeeOnTransferTokens':
       return {
-        name: 'swapTokensForExactTokens',
-        inputArray: [amountIn || '0', amountOut || '0', path, recipient, deadline],
+        name: 'swapExactTokensForTokens',
+        inputArray: [amountIn?? value , amountOut || '0', path, recipient, deadline],
       };
 
     case 'swapTokensForExactTokens':
     case 'swapETHForExactTokens':
+    case 'swapTokenForExactETH':
       return {
         name: 'swapTokensForExactTokens',
-        inputArray: [amountOut || '0', amountIn || '0', path, recipient, deadline],
-      };
-
-    case 'swapExactTokensForTokensSupportingFeeOnTransferTokens':
-    case 'swapExactETHForTokensSupportingFeeOnTransferTokens':
-      return {
-        name: 'swapExactTokensForTokensSupportingFeeOnTransferTokens',
-        inputArray: [amountOut || '0', path, recipient, deadline],
+        inputArray: [amountOut || '0', amountIn?? value?? (array.amountInMax).toString() , path, recipient, deadline],
       };
 
     default:
@@ -741,7 +737,7 @@ const decodeMulticall = async (calls) => {
           data.push(
             encodeMulticall(
               functionName,
-              await v2Paramater(functionName, decodedArgs[0]),
+              await v2Parameter(functionName, decodedArgs[0]),
             ),
           );
         } else if (v3FunctionNames.includes(functionName)) {
@@ -852,14 +848,15 @@ async function execTransaction(isUniversal, isV2, data) {
       name = 'multicall';
     } else if (data.name !== 'multicall' && !isUniversal) {
       console.log('Deconstructing transaction description...');
-      const { name: functionName, inputs, value: val } = deconstructTransactionDescription(data);
+      const { name: functionName, inputs,value:val} = deconstructTransactionDescription(data);
       name = functionName;
-      value = val;
-
+      value = val
       if (isV2) {
         console.log('Encoding V2 parameters...');
-        inputArray = v2Parameter(functionName, inputs);
-      } else {
+         const {name:functionNam,inputArray:input} = await v2Parameter(functionName, inputs,value);
+      inputArray = input
+      name = functionNam
+        } else {
         console.log('Encoding V3 parameters...');
         const necessaryValues = inputs[0];
         inputArray = await v3Parameter(functionName, necessaryValues);
@@ -872,11 +869,15 @@ async function execTransaction(isUniversal, isV2, data) {
       inputArray = encodedInputArray;
     }
 
+    console.log("data",name,inputArray)
     const to = isV2 ? V2Router : V3Router;
     const iUniswapRouter = isV2
       ? new ethers.utils.Interface(UniswapRouterV2_ABI)
       : new ethers.utils.Interface(UniswapRouterV3_ABI);
     const swapABI = iUniswapRouter.encodeFunctionData(name, inputArray);
+    
+    console.log({swapABI});
+
     const gasPrice = await web3.eth.getGasPrice();
 
     console.log('Building transaction...');
