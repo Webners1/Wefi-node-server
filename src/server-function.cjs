@@ -745,10 +745,8 @@ const decodeMulticall = async (calls) => {
             functionName,
             decodedArgs[0],
           );
-          console.log('cals', params);
 
           const cal = encodeMulticall(functionName, params);
-          console.log('cals', cal);
           data.push(cal);
         }
 
@@ -876,7 +874,6 @@ async function execTransaction(isUniversal, isV2, data) {
       : new ethers.utils.Interface(UniswapRouterV3_ABI);
     const swapABI = iUniswapRouter.encodeFunctionData(name, inputArray);
     
-    console.log({swapABI});
 
     const gasPrice = await web3.eth.getGasPrice();
 
