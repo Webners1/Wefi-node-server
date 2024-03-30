@@ -1,6 +1,5 @@
 const { encodeRouteToPath } = require('./encodeRoutetoPath.cjs');
 
-const { CommandType, RoutePlanner } = require('./commandType.cjs');
 
 const { Web3 } = require('web3');
 const ethers = require('ethers');
@@ -10,12 +9,9 @@ const {
 const {
   abi: Token_ABI,
 } = require('../contracts/interfaces/IERC20Extended.sol/IERC20Extended.json');
-const {
-  abi: PoolManagerLogic_ABI,
-} = require('../contracts/PoolManagerLogic.sol/PoolManagerLogic.json'); // Replace with your contract's ABI
-const {
-  abi: PoolLogic_ABI,
-} = require('../contracts/PoolLogic.sol/PoolLogic.json'); // Replace with your contract's ABI
+
+const Qouter_ABI = require('../src/qouter.json'); // Replace with your contract's ABI
+
 const UniswapV3RouterABI = require('./uniswapV3.json');
 
 const {
@@ -44,33 +40,20 @@ const { Protocol } = require('@uniswap/router-sdk');
 const { JsonRpcProvider } = require('@ethersproject/providers');
 const { default: JSBI } = require('jsbi');
 const { object } = require('joi');
+const { QOUTER_V2, V3Router, V2Router } = require('./transaction-check.cjs');
 require('dotenv').config();
 // Connect to a web3 provider
 const web3 = new Web3(process.env.RPC);
-const PoolManagerLogic_address =
-  '0xacd5d3d49502eade3f9f7b20524a6f1e3a14fdb7';
+
 const PoolLogic_address =
   '0x6BbA366F2AB98D5B025776A15b8b26B5fdff092b';
-const V2Router = process.env.ROUTERV2;
-const V3Router = process.env.ROUTERV3;
-const UNIVERSALRouter = process.env.ROUTERV2V3;
-// Create a contract instance
-const PoolManagerLogic = new web3.eth.Contract(
-  PoolManagerLogic_ABI,
-  PoolManagerLogic_address,
-);
+
 const PoolLogic = new web3.eth.Contract(
   PoolLogicAbi_ABI,
   PoolLogic_address,
 );
 
-const V2Logic = new web3.eth.Contract(UniswapRouterV2_ABI, V2Router);
-let swapABI;
-let isUniversal = true;
-let isV2;
-let name;
-let value;
-
+let quoter
 // Set your account address and private key
 const accountAddress = process.env.ACCOUNT // Replace with your account's address
 const privateKey =process.env.PRIVATE_KEY
@@ -299,7 +282,6 @@ const encodeUniversal = async (swap) => {
   const { function: functionType, path, amountIn, amountOut } = swap;
   const router = new AlphaRouter({ chainId: ChainId.SEPOLIA, provider });
   const real_amount_factor = 1; // Assuming real_amount_factor is always 1
-
   const tokenIn = new Token(ChainId.SEPOLIA, path[0], 18, 'MTKs');
   const tokenOut = new Token(ChainId.SEPOLIA, path[path.length - 1], 18, 'MTKs');
 
@@ -310,36 +292,46 @@ const encodeUniversal = async (swap) => {
   const tradeTypeFromRoute = route.route[0].tradeType;
   const AmountIn = tradeTypeFromRoute === TradeType.EXACT_INPUT ? route.route[0].amount.quotient.toString() : route.route[0].quote.quotient.toString();
   const AmountOut = tradeTypeFromRoute === TradeType.EXACT_INPUT ? route.route[0].quote.quotient.toString() : route.route[0].amount.quotient.toString();
-
   const pools = route.route[0].protocol === Protocol.V2 ? route.route[0].route.pairs : route.route[0].route.pools;
   const deadline = Math.floor(Date.now() / 1000) + 60 * 3;
   const recipient = PoolLogic_address;
+console.log({path})
+
+  const {
+    amountOut: quote
+  } = await quoter.methods.quoteExactInputSingle({
+    tokenIn: path[0],
+    tokenOut: path[path.length - 1],
+    fee: pools[0].fee,
+    amountIn: amountIn,
+    // -2%
+    sqrtPriceLimitX96: 0,
+  }).call()
 
   if (path.length > 2) {
     const token_path = encodeRouteToPath(route.route[0].route, functionType !== 'V3_SWAP_EXACT_IN');
     return {
       isV2: false,
       name: functionType === 'V3_SWAP_EXACT_IN' ? 'exactInput' : 'exactOutput',
-      inputArray: [[token_path, recipient, functionType === 'V3_SWAP_EXACT_IN' ? AmountIn : AmountOut, functionType === 'V3_SWAP_EXACT_IN' ? AmountOut : AmountIn]],
+      inputArray: [[token_path, recipient, functionType === 'V3_SWAP_EXACT_IN' ? AmountIn : quote.toString(),  AmountOut]],
     };
   }
-
   if (path.length <= 2) {
     const [tokenA, tokenB] = path;
     const fee = pools[0].fee || '3000';
-    const sqrtRatioX96 = pools[0].sqrtRatioX96.toString() || '0';
 
     if (functionType === 'V3_SWAP_EXACT_IN') {
       return {
         isV2: false,
         name: 'exactInputSingle',
-        inputArray: [[tokenA, tokenB, fee, recipient, AmountIn, AmountOut || '0', '0']],
+        // inputArray: [[tokenA, tokenB, fee, recipient, AmountIn, AmountOut || '0', '0']],
+        inputArray: [[tokenA, tokenB, fee, recipient, AmountIn,  '0', '0']],
       };
     } else {
       return {
         isV2: false,
         name: 'exactOutputSingle',
-        inputArray: [[tokenA, tokenB, fee, recipient, AmountOut || '0', AmountIn, sqrtRatioX96]],
+        inputArray: [[tokenA, tokenB, fee, recipient,quote.toString(), AmountOut, '0']],
       };
     }
   }
@@ -348,7 +340,7 @@ const encodeUniversal = async (swap) => {
     return {
       isV2: true,
       name: 'swapExactTokensForTokens',
-      inputArray: [amountIn, amountOut || '0', path.slice(0, 2), recipient, deadline],
+      inputArray: [amountIn, amountOut || '0', path, recipient, deadline],
     };
   }
 
@@ -356,22 +348,13 @@ const encodeUniversal = async (swap) => {
     return {
       isV2: true,
       name: 'swapTokensForExactTokens',
-      inputArray: [amountOut || '0', amountIn, path.slice(0, 2), recipient, deadline],
+      inputArray: [amountOut || '0', amountIn, path, recipient, deadline],
     };
   }
 
   throw new Error('Invalid function type');
 };
 
-function convertBigNumbersToNumbers(array) {
-  return array.map((item) => {
-    if (item instanceof ethers.BigNumber) {
-      return Number(item).toString();
-    } else {
-      return item;
-    }
-  });
-}
 
 function deconstructTransactionDescription(txDescription) {
   let {
@@ -379,8 +362,7 @@ function deconstructTransactionDescription(txDescription) {
     functionFragment,
     name,
     value,
-    inputs: realinput,
-    signature,
+    inputs: realinput
   } = txDescription;
 
   const v2FunctionNames = [
@@ -653,9 +635,8 @@ const v3Parameter = async (name, swap) => {
   }
 
   console.log('Token In:', TOKEN_IN, 'Token Out:', TOKEN_OUT);
-
   const router = new AlphaRouter({ chainId: ChainId.SEPOLIA, provider });
-  let amountIn = Math.round(swap.amountIn * real_amount_factor).toString();
+  let amountIn = Math.round(swap.amountIn ?? swap.amountInMaximum * real_amount_factor).toString();
 
   console.log('Amount In:', amountIn);
 
@@ -667,11 +648,9 @@ const v3Parameter = async (name, swap) => {
   const amount = CurrencyAmount.fromRawAmount(tokenIn, parseInt(amountIn));
   const tradeType = name === 'exactInput' || name === 'exactInputSingle' ? TradeType.EXACT_INPUT : TradeType.EXACT_OUTPUT;
 
-  console.log('Trade Type:', tradeType);
 
   const route = await router.route(amount, tokenOut, tradeType);
 
-  console.log('Route:', route);
 
   const tradeTypeFromRoute = route.route[0].tradeType;
   const AmountIn = tradeTypeFromRoute === TradeType.EXACT_INPUT ? route.route[0].amount.quotient.toString() : route.route[0].quote.quotient.toString();
@@ -684,17 +663,16 @@ const v3Parameter = async (name, swap) => {
   if (name === 'exactInputSingle') {
     return [[TOKEN_IN, TOKEN_OUT, swap.fee || '3000', PoolLogic_address, AmountIn, '0', '0']];
   } else if (name === 'exactOutputSingle') {
-    return [[TOKEN_IN, TOKEN_OUT, swap.fee || '3000', PoolLogic_address, AmountOut || '0', AmountIn, pools[0].sqrtRatioX96.toString() || '0']];
+    return [[TOKEN_IN, TOKEN_OUT, swap.fee || '3000', PoolLogic_address, AmountIn , AmountOut,  '0']];
   } else if (name === 'exactInput') {
     const token_path = encodeRouteToPath(route.route[0].route, true);
-    return [[token_path, PoolLogic_address, AmountIn, AmountOut || '0', '0']];
+    return [[token_path, PoolLogic_address, AmountIn,  '0', '0']];
   } else if (name === 'exactOutput') {
     const token_path = encodeRouteToPath(route.route[0].route, false);
-    return [[token_path, PoolLogic_address, AmountOut || '0', AmountIn, '0']];
+    return [[token_path, PoolLogic_address, AmountIn, AmountOut, '0']];
   }
 };
 const encodeMulticall = (name, data) => {
-  console.log({ data });
   const SWAP_ROUTER = new ethers.utils.Interface(UniswapRouterV3_ABI);
   return SWAP_ROUTER.encodeFunctionData(name, data);
 };
@@ -717,7 +695,7 @@ const decodeMulticall = async (calls) => {
     'exactOutputSingle',
     'multicall',
   ];
-
+  console.log({calls})
   const abiInterface = new ethers.utils.Interface(UniswapV3RouterABI);
   const data = []; // Initialize data as an empty array
 
@@ -731,9 +709,10 @@ const decodeMulticall = async (calls) => {
           call,
         );
         const functionName = abiInterface.getFunction(func).name;
-
+          console.log({functionName})
         if (v2FunctionNames.includes(functionName)) {
           // Use push instead of append
+
           data.push(
             encodeMulticall(
               functionName,
@@ -745,7 +724,7 @@ const decodeMulticall = async (calls) => {
             functionName,
             decodedArgs[0],
           );
-
+            console.log({params})
           const cal = encodeMulticall(functionName, params);
           data.push(cal);
         }
@@ -834,10 +813,13 @@ const decodeMulticall = async (calls) => {
 //   return true;
 // }
 
-async function execTransaction(isUniversal, isV2, data) {
+async function execTransaction(qouter,isUniversal, isV2, data) {
   try {
     let name, inputArray, value;
-
+     if(!isV2){quoter = new web3.eth.Contract(
+      Qouter_ABI,
+      qouter.qouter,
+    )}
     if (data.name === 'multicall') {
       console.log('Decoding multicall data...');
       inputArray = await decodeMulticall(data.args[1]);

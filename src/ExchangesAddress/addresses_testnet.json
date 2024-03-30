@@ -1,0 +1,35 @@
+[
+    {
+        "UniswapV2": "0xC532a74256D3Db42D0Bf7a0400fEFDbad7694008",
+        "UniswapV3": "0x3bFA4769FB09eefC5a80d6E87c3B9C650f7Ae48E",
+        "UniswapUniversalRouter:": "0x3fC91A3afd70395Cd496C647d5a6CC9D4B2b7FAD",
+        "QouterV2": "0xEd1f6473345F45b75F8179591dd5bA1888cf2FB3"
+    },
+    {
+        "PancakeswapV2": "0x8cFe327CEc66d1C090Dd72bd0FF11d690C33a2Eb",
+        "PancakeswapV3": "0x1b81D678ffb9C0263b24A97847620C99d213eB14",
+        "PancakeswapSmartRouter:": "0x32226588378236Fd0c7c4053999F88aC0e5cAc77",
+        "QouterV2": "0xEd1f6473345F45b75F8179591dd5bA1888cf2FB3"
+        
+    },
+    {
+        "SushiswapV2": "0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506",
+        "SushiswapV3": "0x1b81D678ffb9C0263b24A97847620C99d213eB14 // NOT FOUND",
+        "SushiswapSwapRouter:": "0x8A21F6768C1f8075791D08546Dadf6daA0bE820c",
+        "QouterV2": "0xEd1f6473345F45b75F8179591dd5bA1888cf2FB3"
+    },
+    {
+        "CamelotV2": "0xc873fEcbd354f5A56E00E710B90EF4201db2448d",
+        "CamelotV3": "0x1F721E2E82F6676FCE4eA07A5958cF098D339e18",
+        "QouterV2": "0x3fC91A3afd70395Cd496C647d5a6CC9D4B2b7FAD"
+    },
+    {
+        "RamsesV2": "0xAAA87963EFeB6f7E0a2711F397663105Acb1805e",
+        "RamsesV3": "0xAA23611badAFB62D37E7295A682D21960ac85A90",
+        "RamsesUniversalRouter:": "0xAA273216Cc9201A1e4285CA623f584BADc736944",
+        "QouterV2": "0x3fC91A3afd70395Cd496C647d5a6CC9D4B2b7FAD"
+    },
+    {
+        "SmarDexV2": "0xDA3970a20cdc2B1269fc96C4E8D300E0fdDB7b3D"
+    }
+]

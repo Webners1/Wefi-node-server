@@ -12,7 +12,7 @@ const { configDotenv } = require('dotenv');
 
 const settings = {
   apiKey: "8u_Y-TzFMwVvoX5WDEFY5Eho7VFSUrJj", // Replace with your Alchemy API Key
-  network: Network.ARB_GOERLI, // Replace with your network
+  network: Network.ETH_SEPOLIA, // Replace with your network
 };
 const monitoredWalletAddress = '0xbE7167396cF48578186FF088d6a978081b205b5d';
 
@@ -35,18 +35,16 @@ alchemy.ws.on(
 );
 
 // Replace YOUR_WALLET_ADDRESS with the address you want to monitor
-const infuraWsUrl = process.env.RPC
 
 // Create a new instance of the Web3 provider
-const web3 = new Web3(infuraWsUrl);
 
 const getEvents = async (txHash) => {
   //@error isv2 is false, but function type is specifying that the function name is V2_SWAP_EXACT_OUT, tiggering the v2 swap function.
   const data  = await getTransactionDetails(txHash);
-  // const result = await getTransactionDetails(txHash.transaction.hash);
-  execTransaction(data.isUniversal,data.isV2,data.result)
+  // const data = await getTransactionDetails(txHash.transaction.hash);
+  execTransaction(data,data.isUniversal,data.isV2,data.result)
 
 };
 
-getEvents("0xfceb88ebef498fa089e0124482fd765275955f5731ee324cc701c62c44b48ed9")
+getEvents("0x7d9cadc686ed977b44a6199dabe8719ac17b6cd9564067b367c7e7ea93d17c9a")
 
