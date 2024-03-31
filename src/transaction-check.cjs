@@ -21,31 +21,34 @@ let QOUTER_V2;
 const getAddress = (address) => {
   for (const item of ADDRESS_LIST) {
     for (const key in item) {
-      if (item[key] === address && key.includes("V2")) {
+      if ((item[key]).toLowerCase() === address && key.includes("V2")) {
         return {isUniversal:false,isV2:true, address: item[key], key: key };
       }
-      if (item[key] === address && key.includes("V3")) {
+      if ((item[key]).toLowerCase() === address && key.includes("V3")) {
         return {Qouter:item["QouterV2"], isUniversal:false,isV2:false,address: item[key], key: key };
       }
-      else{
+      else if((item[key]).toLowerCase() === address && key.includes("Router")){
         return { Qouter:item["QouterV2"], isUniversal:true,isV2:false,address: item[key], key: key };
 
       }
+      
     }
+   
   }
+  return null
 
-  throw new Error("Address not found in list");
 };
  async function getTransactionDetails(txHash) {
   try {
     // Get transaction from node
     const tx = await web3.eth.getTransaction(txHash);
 
-  var {Qouter,isV2, isUniversal}= getAddress(tx.to)
-  QOUTER_V2 = !isV2 ? Qouter:""
-  console.log({QOUTER_V2})
+  var Info= getAddress(tx.to)
   // console.log("receipt",receipt.logs)  // Check if transaction is to Uniswap V2 Router
-    if (isV2) {
+  if(Info){
+const {isV2, isUniversal} = Info
+QOUTER_V2 = !isV2 ? Info?.Qouter:null
+  if (isV2) {
       // Decode input data using Uniswap V2 Router ABI
       // const router = new web3.eth.Contract(UniswapV2RouterABI, uniswapV2RouterAddress);
       //  inputData = tx.input;
@@ -64,9 +67,11 @@ const getAddress = (address) => {
       UNIVERSAL = tx.to
 decodedInput =  decodeExecute(tx.data)
      return {qouter:QOUTER_V2,isUniversal, isV2,result :decodedInput}
-    } else { 
-      console.log('Not a Uniswap transaction');
-    }
+    } 
+  } 
+  else { 
+    console.error('Not a Uniswap transaction');
+  }
   } catch (error) {
     console.error('Error fetching transaction details:', error);
   }
@@ -79,6 +84,5 @@ function decodeUniswapV3Transaction(tx) {
 return decodedInput
 }
 
-console.log({QOUTER_V2})
 
 module.exports = { getTransactionDetails,QOUTER_V2,V2Router,V3Router,UNIVERSAL}

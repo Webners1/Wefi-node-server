@@ -295,9 +295,9 @@ const encodeUniversal = async (swap) => {
   const pools = route.route[0].protocol === Protocol.V2 ? route.route[0].route.pairs : route.route[0].route.pools;
   const deadline = Math.floor(Date.now() / 1000) + 60 * 3;
   const recipient = PoolLogic_address;
-console.log({path})
 
-  const {
+  if(path.length >1){
+    var {
     amountOut: quote
   } = await quoter.methods.quoteExactInputSingle({
     tokenIn: path[0],
@@ -306,10 +306,21 @@ console.log({path})
     amountIn: amountIn,
     // -2%
     sqrtPriceLimitX96: 0,
-  }).call()
+  }).call()}
+ 
+  
+
 
   if (path.length > 2) {
     const token_path = encodeRouteToPath(route.route[0].route, functionType !== 'V3_SWAP_EXACT_IN');
+
+    var {
+      amountOut: quote
+    } = await quoter.methods.quoteExactInput({
+      path: token_path,
+      amountIn: amountIn,
+
+    }).call()
     return {
       isV2: false,
       name: functionType === 'V3_SWAP_EXACT_IN' ? 'exactInput' : 'exactOutput',
@@ -656,7 +667,7 @@ const v3Parameter = async (name, swap) => {
   const AmountIn = tradeTypeFromRoute === TradeType.EXACT_INPUT ? route.route[0].amount.quotient.toString() : route.route[0].quote.quotient.toString();
   const AmountOut = tradeTypeFromRoute === TradeType.EXACT_INPUT ? route.route[0].quote.quotient.toString() : route.route[0].amount.quotient.toString();
 
-  const pools = route.route[0].protocol === Protocol.V2 ? route.route[0].route.pairs : route.route[0].route.pools;
+  // const pools = route.route[0].protocol === Protocol.V2 ? route.route[0].route.pairs : route.route[0].route.pools;
 
   console.log('Amount In:', AmountIn, 'Amount Out:', AmountOut);
 
