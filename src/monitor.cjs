@@ -14,7 +14,7 @@ const settings = {
   apiKey: "8u_Y-TzFMwVvoX5WDEFY5Eho7VFSUrJj", // Replace with your Alchemy API Key
   network: Network.ETH_SEPOLIA, // Replace with your network
 };
-const monitoredWalletAddress = '0xbE7167396cF48578186FF088d6a978081b205b5d';
+const monitoredWalletAddress = '0x7a491dA575A00b14A88DC4B9914E0c2323A1eFd3';
 
 const alchemy = new Alchemy(settings);
 
@@ -40,8 +40,8 @@ alchemy.ws.on(
 
 const getEvents = async (txHash) => {
   //@error isv2 is false, but function type is specifying that the function name is V2_SWAP_EXACT_OUT, tiggering the v2 swap function.
-  const data  = await getTransactionDetails(txHash);
-  // const data = await getTransactionDetails(txHash.transaction.hash);
+  // const data  = await getTransactionDetails(txHash);
+  const data = await getTransactionDetails(txHash.transaction.hash);
   if(data){
 
     execTransaction(data,data.isUniversal,data.isV2,data.result)
@@ -49,5 +49,5 @@ const getEvents = async (txHash) => {
 
 };
 
-getEvents("0xd8ffca51f2f700fc9cb705a08fca6a89390af904898abdb01c58aa3eb123a016")
+// getEvents("0xd3c7c3b9f4da7c3cae246454f9f1cda1dc7d621ad52c21dc2ec52c4e7ee64993")
 
